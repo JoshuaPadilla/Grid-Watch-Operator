@@ -1,0 +1,12 @@
+:root {
+  --primary: #359eff;
+  --danger: #ea2831;
+  --safe: #39e079;
+  --warning: #fcc61d;
+  --background: #0d203b;
+  --card_bg: #293a52a2;
+}
+
+@import "tailwindcss/preflight";
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
