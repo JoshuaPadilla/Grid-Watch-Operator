@@ -20,6 +20,7 @@ function App() {
           <DeviceList showAddDevice={setShowAddDevice} />
         </div>
 
+        {/* Device Info */}
         <div className="col-span-full row-span-3 bg-(--card_bg)"></div>
       </div>
 

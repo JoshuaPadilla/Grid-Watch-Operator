@@ -1,11 +1,14 @@
 import React from "react";
 import DeviceCard from "../device_card";
+import { useDeviceStore } from "../../store/useDeviceStore";
 
 interface Props {
   showAddDevice: (show: boolean) => void;
 }
 
 function DeviceList({ showAddDevice }: Props) {
+  const { devices } = useDeviceStore();
+
   return (
     <div className="w-full h-full bg-(--card_bg) p-4 rounded-2xl items-center">
       {/* Header */}
@@ -22,12 +25,9 @@ function DeviceList({ showAddDevice }: Props) {
 
       {/* list */}
       <ul className="flex flex-col gap-2 h-[85%] list-none overflow-y-scroll">
-        <DeviceCard />
-        <DeviceCard />
-        <DeviceCard />
-        <DeviceCard />
-        <DeviceCard />
-        <DeviceCard />
+        {devices.map((device) => (
+          <DeviceCard device={device} key={device._id} />
+        ))}
       </ul>
     </div>
   );

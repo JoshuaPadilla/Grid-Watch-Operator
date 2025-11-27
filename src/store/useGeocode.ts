@@ -1,15 +1,21 @@
 import { create } from "zustand";
 import type { LocationName } from "../interfaces/location_name.interface";
+import type { LocationCoordinates } from "../interfaces/location_coor.interface";
 
 interface StoreState {
-  getLocationName: (lat: string, lng: string) => void;
+  getLocationName: (
+    coord: LocationCoordinates | undefined
+  ) => Promise<LocationName | undefined>;
 }
 
 export const useGeoCodeStore = create<StoreState>((set) => ({
-  getLocationName: async (lat, lng) => {
+  getLocationName: async (coord) => {
+    console.log(coord);
+    if (!coord) return undefined;
+
     try {
       const req = await fetch(
-        `https://us1.locationiq.com/v1/reverse?key=pk.e34742aad85680d4ff0edd1d67d775af&lat=${lat}&lon=${lng}&format=json&`,
+        `https://us1.locationiq.com/v1/reverse?key=pk.e34742aad85680d4ff0edd1d67d775af&lat=${coord.lat}&lon=${coord.lng}&format=json&`,
         {
           method: "GET",
         }

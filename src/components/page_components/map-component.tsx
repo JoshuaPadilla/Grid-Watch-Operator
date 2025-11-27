@@ -4,26 +4,26 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { popupIcon } from "../popupIcon";
 import { useGeoCodeStore } from "../../store/useGeocode";
+import { useDeviceStore } from "../../store/useDeviceStore";
+import type { Device } from "../../interfaces/device.interface";
+import MapCenterController from "../mapCenterController";
 
 const MapComponent = () => {
-  const [mapPosition, setMapPosition] = useState<[number, number]>([
-    12.068560089554783, 124.59141719142677,
-  ]);
-
-  const { getLocationName } = useGeoCodeStore();
+  const { getDevices, devices, focusedDevice } = useDeviceStore();
 
   useEffect(() => {
-    const result = getLocationName(
-      mapPosition[0].toString(),
-      mapPosition[1].toString()
-    );
+    getDevices();
+  }, [getDevices]);
 
-    console.log("Result!!!:", result);
-  }, [getLocationName, mapPosition]);
+  console.log(
+    Number(focusedDevice?.locationCoordinates?.lat),
+    Number(focusedDevice?.locationCoordinates?.lng)
+  );
+
   return (
     <MapContainer
-      center={mapPosition}
-      zoom={16}
+      center={[12.067464704041424, 124.5924237721899]}
+      zoom={20}
       scrollWheelZoom={false}
       className="h-full w-full "
     >
@@ -32,18 +32,31 @@ const MapComponent = () => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
 
-      {/* <TileLayer
-        // The standard and most reliable OpenStreetMap URL
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      /> */}
+      <MapCenterController
+        locationCoordinates={focusedDevice?.locationCoordinates || null}
+      />
 
-      <Marker
-        position={[12.067902291074136, 124.59411950590255]}
-        icon={popupIcon}
-      >
-        <Popup>{}</Popup>
-      </Marker>
+      {devices.length > 0 &&
+        devices.map((device, index) => {
+          return (
+            <Marker
+              key={device._id ?? index}
+              position={
+                device.locationCoordinates
+                  ? [
+                      Number(device.locationCoordinates?.lat),
+                      Number(device.locationCoordinates?.lng),
+                    ]
+                  : [0, 0]
+              }
+              icon={popupIcon}
+            >
+              <Popup>
+                {`${device.locationName?.road} ${device.locationName?.brgy}, ${device.locationName?.city}`}
+              </Popup>
+            </Marker>
+          );
+        })}
     </MapContainer>
   );
 };
