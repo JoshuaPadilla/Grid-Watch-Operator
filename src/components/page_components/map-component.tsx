@@ -15,15 +15,10 @@ const MapComponent = () => {
     getDevices();
   }, [getDevices]);
 
-  console.log(
-    Number(focusedDevice?.locationCoordinates?.lat),
-    Number(focusedDevice?.locationCoordinates?.lng)
-  );
-
   return (
     <MapContainer
       center={[12.067464704041424, 124.5924237721899]}
-      zoom={20}
+      zoom={12}
       scrollWheelZoom={false}
       className="h-full w-full "
     >

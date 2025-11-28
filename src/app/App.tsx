@@ -3,6 +3,7 @@ import AddDevicePopup from "../components/add_device_popup";
 import DeviceList from "../components/page_components/device_list";
 import Header from "../components/page_components/header";
 import MapComponent from "../components/page_components/map-component";
+import DeviceInfo from "../components/page_components/device_info";
 
 function App() {
   const [showAddDevice, setShowAddDevice] = useState(false);
@@ -21,7 +22,9 @@ function App() {
         </div>
 
         {/* Device Info */}
-        <div className="col-span-full row-span-3 bg-(--card_bg)"></div>
+        <div className="col-span-full row-span-3 ">
+          <DeviceInfo />
+        </div>
       </div>
 
       <AddDevicePopup show={showAddDevice} hideAddDevice={setShowAddDevice} />

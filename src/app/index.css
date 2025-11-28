@@ -4,7 +4,18 @@
   --safe: #39e079;
   --warning: #fcc61d;
   --background: #0d203b;
-  --card_bg: #293a52a2;
+  --card_bg: #232f41a2;
+}
+
+/* For WebKit browsers (Chrome, Safari) */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE and Edge (optional) */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 @import "tailwindcss/preflight";
