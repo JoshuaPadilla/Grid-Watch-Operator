@@ -4,9 +4,12 @@ import DeviceList from "../components/page_components/device_list";
 import Header from "../components/page_components/header";
 import MapComponent from "../components/page_components/map-component";
 import DeviceInfo from "../components/page_components/device_info";
+import { useDeviceStore } from "../store/useDeviceStore";
 
 function App() {
   const [showAddDevice, setShowAddDevice] = useState(false);
+
+  const { focusedDevice } = useDeviceStore();
 
   return (
     <>
@@ -22,9 +25,11 @@ function App() {
         </div>
 
         {/* Device Info */}
-        <div className="col-span-full row-span-3 ">
-          <DeviceInfo />
-        </div>
+        {focusedDevice && (
+          <div className={`col-span-full row-span-3`}>
+            <DeviceInfo />
+          </div>
+        )}
       </div>
 
       <AddDevicePopup show={showAddDevice} hideAddDevice={setShowAddDevice} />

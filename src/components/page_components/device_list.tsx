@@ -1,6 +1,7 @@
 import React from "react";
 import DeviceCard from "../device_card";
 import { useDeviceStore } from "../../store/useDeviceStore";
+import { usePayloadStore } from "../../store/usePayloadStore";
 
 interface Props {
   showAddDevice: (show: boolean) => void;
@@ -24,7 +25,7 @@ function DeviceList({ showAddDevice }: Props) {
       </div>
 
       {/* list */}
-      <ul className="flex flex-col gap-2 h-[85%] list-none overflow-y-scroll">
+      <ul className="flex flex-col gap-2 h-[85%] list-none overflow-y-scroll hide-scrollbar">
         {devices.map((device) => (
           <DeviceCard device={device} key={device._id} />
         ))}

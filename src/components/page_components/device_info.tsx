@@ -10,9 +10,20 @@ import {
   YAxis,
 } from "recharts";
 import { payload } from "../../app/dev-data/payload-data";
+import { usePayloadStore } from "../../store/usePayloadStore";
+import {
+  ClipLoader,
+  MoonLoader,
+  PacmanLoader,
+  PuffLoader,
+  ScaleLoader,
+} from "react-spinners";
 
 function DeviceInfo() {
   const { focusedDevice } = useDeviceStore();
+
+  const { deviceLast20Payloads, loading } = usePayloadStore();
+  console.log(deviceLast20Payloads);
 
   const deviceFields = [
     { label: "Device ID:", value: focusedDevice?.deviceId, size: "text-xl" },
@@ -57,85 +68,121 @@ function DeviceInfo() {
       </div>
 
       {/* Voltage */}
-      <div className="bg-(--card_bg) flex-1 p-4 rounded-sm overflow-y-clip max-w-[30%]">
-        <h3 className="text-white font-semibold text-2xl mb-2">
-          Voltage Readings
-        </h3>
+      <div
+        className={`${
+          loading && "flex justify-center items-center"
+        } bg-(--card_bg) flex-1 p-4 rounded-sm overflow-y-clip max-w-[30%]`}
+      >
+        <MoonLoader
+          size={120}
+          color="
+        #359eff"
+          loading={loading}
+        />
+        {!loading && (
+          <>
+            <h3 className="text-white font-semibold text-2xl mb-2">
+              Voltage Readings
+            </h3>
 
-        <h3 className="text-white font-semibold text-3xl mb-2">~ 245V</h3>
+            <h3 className="text-white font-semibold text-3xl mb-2">~ 245V</h3>
 
-        <div className="overflow-x-auto hide-scrollbar">
-          <AreaChart
-            style={{
-              width: payload.length * 80,
-              height: 180,
-            }}
-            responsive
-            data={payload}
-            margin={{
-              top: 20,
-              right: 0,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke="rgba(56, 99, 160, 0.635)"
-            />
-            <YAxis width="auto" dataKey="voltage" />
-            <XAxis dataKey="time" width="auto" tickLine={{ stroke: "#FFF" }} />
-            <Tooltip />
-            <Area
-              type="monotone"
-              dataKey="voltage"
-              stroke="#359eff"
-              fill="#359eff"
-            />
-          </AreaChart>
-        </div>
+            <div className="overflow-x-auto hide-scrollbar">
+              <AreaChart
+                style={{
+                  width: payload.length * 80,
+                  height: 180,
+                }}
+                responsive
+                data={deviceLast20Payloads}
+                margin={{
+                  top: 20,
+                  right: 0,
+                  left: 0,
+                  bottom: 0,
+                }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="rgba(56, 99, 160, 0.635)"
+                />
+                <YAxis width="auto" dataKey="voltage" />
+                <XAxis
+                  dataKey="createdAt"
+                  width="auto"
+                  tickLine={{ stroke: "#FFF" }}
+                />
+                <Tooltip />
+                <Area
+                  type="monotone"
+                  dataKey="voltage"
+                  stroke="#359eff"
+                  fill="#359eff"
+                />
+              </AreaChart>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Current */}
-      <div className="bg-(--card_bg) flex-1 p-4 rounded-sm overflow-y-clip max-w-[30%]">
-        <h3 className="text-white font-semibold text-2xl mb-2">
-          Current Readings
-        </h3>
+      <div
+        className={`${
+          loading && "flex justify-center items-center"
+        } bg-(--card_bg) flex-1 p-4 rounded-sm overflow-y-clip max-w-[30%]`}
+      >
+        <MoonLoader
+          size={120}
+          color="
+        #359eff"
+          loading={loading}
+        />
+        {!loading && (
+          <>
+            <h3 className="text-white font-semibold text-2xl mb-2">
+              Current Readings
+            </h3>
 
-        <h3 className="text-white font-semibold text-3xl mb-2">~ 220A</h3>
+            <h3 className="text-white font-semibold text-3xl mb-2">~ 220A</h3>
 
-        <div className="overflow-x-auto hide-scrollbar">
-          <AreaChart
-            style={{
-              width: payload.length * 80,
-              height: 180,
-            }}
-            responsive
-            data={payload}
-            margin={{
-              top: 20,
-              right: 0,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke="rgba(56, 99, 160, 0.635)"
-            />
-            <YAxis width="auto" dataKey="voltage" />
-            <XAxis dataKey="time" width="auto" tickLine={{ stroke: "#FFF" }} />
-            <Tooltip />
-            <Area
-              type="monotone"
-              dataKey="voltage"
-              stroke="#359eff"
-              fill="#359eff"
-            />
-          </AreaChart>
-        </div>
+            <div className="overflow-x-auto hide-scrollbar">
+              <AreaChart
+                style={{
+                  width: payload.length * 80,
+                  height: 180,
+                }}
+                responsive
+                data={deviceLast20Payloads}
+                margin={{
+                  top: 20,
+                  right: 0,
+                  left: 0,
+                  bottom: 0,
+                }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="rgba(56, 99, 160, 0.635)"
+                />
+                <YAxis width="auto" dataKey="current" />
+                <XAxis
+                  dataKey="createdAt"
+                  width="auto"
+                  tickLine={{ stroke: "#FFF" }}
+                />
+                <Tooltip />
+                <Area
+                  type="monotone"
+                  dataKey="voltage"
+                  stroke="#359eff"
+                  fill="#359eff"
+                />
+              </AreaChart>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

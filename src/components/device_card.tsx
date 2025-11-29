@@ -1,6 +1,7 @@
 import React, { useDebugValue } from "react";
 import type { Device } from "../interfaces/device.interface";
 import { useDeviceStore } from "../store/useDeviceStore";
+import { usePayloadStore } from "../store/usePayloadStore";
 
 interface Props {
   device: Device;
@@ -9,8 +10,11 @@ interface Props {
 function DeviceCard({ device }: Props) {
   const { setFocusedDevice } = useDeviceStore();
 
+  const { getDeviceLast20Payloads } = usePayloadStore();
+
   const handleViewDevice = () => {
     setFocusedDevice(device);
+    getDeviceLast20Payloads(device.deviceId);
   };
 
   return (

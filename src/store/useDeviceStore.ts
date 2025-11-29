@@ -1,9 +1,11 @@
 import { create } from "zustand";
 import type { Device } from "../interfaces/device.interface";
 import { BASE_URL } from "../constants/base_url.constant";
+import type { DevicePayload } from "../interfaces/device_payload.interface";
 
 interface StoreState {
   focusedDevice: Device | null;
+  deviceLast20Payloads: DevicePayload[];
   devices: Device[];
   getDevices: () => void;
   addDevice: (deviceId: string) => void;
@@ -13,6 +15,7 @@ interface StoreState {
 
 export const useDeviceStore = create<StoreState>((set, get) => ({
   focusedDevice: null,
+  deviceLast20Payloads: [],
   devices: [],
   getDevices: async () => {
     try {
@@ -65,6 +68,7 @@ export const useDeviceStore = create<StoreState>((set, get) => ({
     //   };
     // });
   },
+
   setFocusedDevice: (device) => {
     set({ focusedDevice: device });
   },
