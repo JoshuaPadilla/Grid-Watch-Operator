@@ -2,19 +2,25 @@ import React, { useDebugValue } from "react";
 import type { Device } from "../interfaces/device.interface";
 import { useDeviceStore } from "../store/useDeviceStore";
 import { usePayloadStore } from "../store/usePayloadStore";
+import socket from "../lib/socket";
 
 interface Props {
   device: Device;
 }
 
 function DeviceCard({ device }: Props) {
-  const { setFocusedDevice } = useDeviceStore();
+  const { setFocusedDevice, focusedDevice } = useDeviceStore();
 
   const { getDeviceLast20Payloads } = usePayloadStore();
 
   const handleViewDevice = () => {
+    if (focusedDevice && focusedDevice.deviceId !== device.deviceId) {
+      socket.emit("disconnectDevice", { deviceId: focusedDevice.deviceId });
+    }
+
     setFocusedDevice(device);
     getDeviceLast20Payloads(device.deviceId);
+    socket.emit("connectDevice", { deviceId: device.deviceId });
   };
 
   return (

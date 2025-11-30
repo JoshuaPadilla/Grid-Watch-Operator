@@ -4,4 +4,5 @@ export interface DevicePayload {
   current: number;
   temperature: number;
   createdAt: string;
+  localCreatedAt: string;
 }

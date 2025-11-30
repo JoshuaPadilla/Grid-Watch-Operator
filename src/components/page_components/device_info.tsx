@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDeviceStore } from "../../store/useDeviceStore";
 import { formatDate } from "../../app/helpers/date_formatter";
 import {
@@ -18,12 +18,42 @@ import {
   PuffLoader,
   ScaleLoader,
 } from "react-spinners";
+import socket from "../../lib/socket";
 
 function DeviceInfo() {
   const { focusedDevice } = useDeviceStore();
+  const [voltageData, setVoltageData] = useState(0);
+  const [currentData, setCurrentData] = useState(0);
 
-  const { deviceLast20Payloads, loading } = usePayloadStore();
-  console.log(deviceLast20Payloads);
+  const {
+    deviceLast20Payloads,
+    loading,
+    updateDeviceLast20Payloads,
+    getLatestPayload,
+  } = usePayloadStore();
+
+  useEffect(() => {
+    const fetchLatestPayload = async () => {
+      if (focusedDevice) {
+        const latestPayload = await getLatestPayload(focusedDevice.deviceId);
+
+        if (latestPayload) {
+          setCurrentData(latestPayload.current);
+          setVoltageData(latestPayload.voltage);
+        }
+      }
+    };
+
+    fetchLatestPayload();
+  }, [focusedDevice, getLatestPayload]);
+
+  useEffect(() => {
+    socket.on("sensorPayload", (data) => {
+      updateDeviceLast20Payloads(data);
+      setCurrentData(data.current);
+      setVoltageData(data.voltage);
+    });
+  }, [updateDeviceLast20Payloads]);
 
   const deviceFields = [
     { label: "Device ID:", value: focusedDevice?.deviceId, size: "text-xl" },
@@ -85,12 +115,14 @@ function DeviceInfo() {
               Voltage Readings
             </h3>
 
-            <h3 className="text-white font-semibold text-3xl mb-2">~ 245V</h3>
+            <h3 className="text-white font-semibold text-3xl mb-2">
+              ~ {voltageData}V
+            </h3>
 
             <div className="overflow-x-auto hide-scrollbar">
               <AreaChart
                 style={{
-                  width: payload.length * 80,
+                  width: deviceLast20Payloads.length * 20,
                   height: 180,
                 }}
                 responsive
@@ -109,7 +141,7 @@ function DeviceInfo() {
                 />
                 <YAxis width="auto" dataKey="voltage" />
                 <XAxis
-                  dataKey="createdAt"
+                  dataKey="localCreatedAt"
                   width="auto"
                   tickLine={{ stroke: "#FFF" }}
                 />
@@ -144,12 +176,14 @@ function DeviceInfo() {
               Current Readings
             </h3>
 
-            <h3 className="text-white font-semibold text-3xl mb-2">~ 220A</h3>
+            <h3 className="text-white font-semibold text-3xl mb-2">
+              ~ {currentData}A
+            </h3>
 
             <div className="overflow-x-auto hide-scrollbar">
               <AreaChart
                 style={{
-                  width: payload.length * 80,
+                  width: deviceLast20Payloads.length * 20,
                   height: 180,
                 }}
                 responsive
@@ -168,14 +202,14 @@ function DeviceInfo() {
                 />
                 <YAxis width="auto" dataKey="current" />
                 <XAxis
-                  dataKey="createdAt"
+                  dataKey="localCreatedAt"
                   width="auto"
                   tickLine={{ stroke: "#FFF" }}
                 />
                 <Tooltip />
                 <Area
                   type="monotone"
-                  dataKey="voltage"
+                  dataKey="current"
                   stroke="#359eff"
                   fill="#359eff"
                 />

@@ -1,15 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddDevicePopup from "../components/add_device_popup";
 import DeviceList from "../components/page_components/device_list";
 import Header from "../components/page_components/header";
 import MapComponent from "../components/page_components/map-component";
 import DeviceInfo from "../components/page_components/device_info";
 import { useDeviceStore } from "../store/useDeviceStore";
+import socket from "../lib/socket";
 
 function App() {
   const [showAddDevice, setShowAddDevice] = useState(false);
 
   const { focusedDevice } = useDeviceStore();
+
+  useEffect(() => {
+    if (socket.connected) {
+      socket.connect();
+    }
+  }, []);
 
   return (
     <>
