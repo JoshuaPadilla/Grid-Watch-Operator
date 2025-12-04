@@ -10,7 +10,7 @@ const Dashboard = () => {
   const { focusedDevice } = useDeviceStore();
 
   return (
-    <div className="grid grid-cols-9 grid-rows-6 w-full h-screen bg-(--background) gap-2 p-8 ">
+    <div className="grid grid-cols-9 grid-rows-6 w-full h-screen bg-(--background) gap-2 p-8">
       <div className="col-span-6 row-span-3 p-2 bg-(--primary)/20">
         <MapComponent />;
       </div>

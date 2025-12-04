@@ -20,7 +20,7 @@ const MapComponent = () => {
       center={[12.067464704041424, 124.5924237721899]}
       zoom={12}
       scrollWheelZoom={false}
-      className="h-full w-full "
+      className="h-full w-full"
     >
       <TileLayer
         url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
