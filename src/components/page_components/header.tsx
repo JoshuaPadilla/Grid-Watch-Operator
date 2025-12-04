@@ -1,4 +1,3 @@
-import React from "react";
 import { Icons } from "../../constants/icons.constant";
 import { useNavStore } from "../../store/useNavStore";
 import { NAVIGATION } from "../../types/nav.type";

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import MapComponent from "./map-component";
 import DeviceList from "./device_list";
 import { useDeviceStore } from "../../store/useDeviceStore";

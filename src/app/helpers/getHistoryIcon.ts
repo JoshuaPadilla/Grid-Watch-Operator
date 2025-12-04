@@ -1,8 +1,5 @@
 import { Icons } from "../../constants/icons.constant";
-import {
-  DEVICE_STATUS,
-  type DeviceStatusType,
-} from "../../types/device_status.type";
+
 import {
   HISTORY_STATUS,
   type HISTORY_STATUS_TYPES,

@@ -3,12 +3,14 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import MapCenterController from "./mapCenterController";
 import type { Device } from "../interfaces/device.interface";
 import { popupIcon } from "./popupIcon";
+import { getDevicePopUpIcon } from "../app/helpers/getDevicePopUpIcon";
 
 interface Props {
   device: Device | undefined;
 }
 
 export const HistoryMap = ({ device }: Props) => {
+  const icon = getDevicePopUpIcon(device.status);
   return (
     <MapContainer
       center={[12.067464704041424, 124.5924237721899]}
@@ -31,7 +33,7 @@ export const HistoryMap = ({ device }: Props) => {
                 ]
               : [0, 0]
           }
-          icon={popupIcon}
+          icon={icon}
         >
           <Popup>
             {`${device.locationName?.road} ${device.locationName?.brgy}, ${device.locationName?.city}`}

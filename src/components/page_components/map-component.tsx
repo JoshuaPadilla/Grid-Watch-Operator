@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { popupIcon } from "../popupIcon";
-import { useGeoCodeStore } from "../../store/useGeocode";
 import { useDeviceStore } from "../../store/useDeviceStore";
-import type { Device } from "../../interfaces/device.interface";
 import MapCenterController from "../mapCenterController";
+import { getDevicePopUpIcon } from "../../app/helpers/getDevicePopUpIcon";
 
 const MapComponent = () => {
   const { getDevices, devices, focusedDevice } = useDeviceStore();
@@ -23,8 +22,8 @@ const MapComponent = () => {
       className="h-full w-full"
     >
       <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
       <MapCenterController
@@ -33,6 +32,7 @@ const MapComponent = () => {
 
       {devices.length > 0 &&
         devices.map((device, index) => {
+          const icon = getDevicePopUpIcon(device.status);
           return (
             <Marker
               key={device._id ?? index}
@@ -44,7 +44,7 @@ const MapComponent = () => {
                     ]
                   : [0, 0]
               }
-              icon={popupIcon}
+              icon={icon}
             >
               <Popup>
                 {`${device.locationName?.road} ${device.locationName?.brgy}, ${device.locationName?.city}`}
