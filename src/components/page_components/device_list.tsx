@@ -14,7 +14,9 @@ function DeviceList({ showAddDevice }: Props) {
     <div className="w-full h-full bg-(--card_bg) p-4 rounded-2xl items-center">
       {/* Header */}
       <div className="flex flex-row justify-between mb-4">
-        <h3 className="font-bold text-xl text-white">Active Devices: 8</h3>
+        <h3 className="font-bold text-xl text-white">
+          Active Devices: {devices.length}
+        </h3>
 
         <button
           className="bg-(--primary) px-2 rounded-md"

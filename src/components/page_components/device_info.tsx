@@ -53,6 +53,10 @@ function DeviceInfo() {
       setCurrentData(data.current);
       setVoltageData(data.voltage);
     });
+
+    socket.on("notification", (data) => {
+      console.log(data);
+    });
   }, [updateDeviceLast20Payloads]);
 
   const deviceFields = [
@@ -78,7 +82,7 @@ function DeviceInfo() {
   ];
 
   return (
-    <div className="flex flex-row flex-1 gap-2 h-full">
+    <div className="flex flex-row flex-1 gap-2 h-full overflow-clip">
       {/* Device info */}
       <div className="bg-(--card_bg) flex-1 p-4 rounded-sm min-w-[40%]">
         <h3 className="text-white font-semibold text-2xl mb-2">Device Info</h3>
@@ -122,7 +126,7 @@ function DeviceInfo() {
             <div className="overflow-x-auto hide-scrollbar">
               <AreaChart
                 style={{
-                  width: deviceLast20Payloads.length * 20,
+                  width: deviceLast20Payloads.length * 40,
                   height: 180,
                 }}
                 responsive
@@ -183,7 +187,7 @@ function DeviceInfo() {
             <div className="overflow-x-auto hide-scrollbar">
               <AreaChart
                 style={{
-                  width: deviceLast20Payloads.length * 20,
+                  width: deviceLast20Payloads.length * 40,
                   height: 180,
                 }}
                 responsive
