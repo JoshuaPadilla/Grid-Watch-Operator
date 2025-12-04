@@ -6,6 +6,7 @@ import location from "../assets/icons/location_icon.png";
 import notif from "../assets/icons/history_notif.png";
 import outage from "../assets/icons/history_outage.png";
 import restored from "../assets/icons/history_restored.png";
+import search from "../assets/icons/search.png";
 
 interface IconsState {
   app_logo: string;
@@ -16,6 +17,7 @@ interface IconsState {
   notif: string;
   outage: string;
   restored: string;
+  search: string;
 }
 
 export const Icons: IconsState = {
@@ -27,4 +29,5 @@ export const Icons: IconsState = {
   notif,
   outage,
   restored,
+  search,
 };

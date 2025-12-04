@@ -7,18 +7,19 @@ interface StoreState {
   history: History[];
   selectedHistory: History | null;
   setSelectedHistory: (history: History) => void;
-  getAllHistory: () => void;
+  getAllHistory: (query?: string) => void;
   getHistory: (historyId: string) => void;
+  setHistory: (query?: string) => void;
 }
 
 export const useHistoryStore = create<StoreState>((set) => ({
   loading: false,
   history: [],
   selectedHistory: null,
-  getAllHistory: async () => {
+  getAllHistory: async (query) => {
     try {
       set({ loading: true });
-      const res = await fetch(`${BASE_URL}history`, {
+      const res = await fetch(`${BASE_URL}history?${query}`, {
         method: "Get",
       });
 
@@ -36,5 +37,21 @@ export const useHistoryStore = create<StoreState>((set) => ({
   getHistory: async () => {},
   setSelectedHistory: (history) => {
     set({ selectedHistory: history });
+  },
+  setHistory: (query) => {
+    set((state) => {
+      let filteredHistory;
+
+      // Use a standard if/else block
+      if (query) {
+        filteredHistory = state.history.filter((history) => {
+          return `${history.title} ${history.body}`.includes(query);
+        });
+      } else {
+        filteredHistory = state.history;
+      }
+
+      return { history: filteredHistory };
+    });
   },
 }));

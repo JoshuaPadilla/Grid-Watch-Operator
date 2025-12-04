@@ -22,11 +22,11 @@ export const HistoryCard = ({ history }: Props) => {
         onClick={() => setSelectedHistory(history)}
         className={`${
           focused ? "bg-white/80" : "bg-white/50"
-        } p-4  rounded-lg flex flex-row w-full gap-4`}
+        } p-2  rounded-lg flex flex-row w-full gap-4`}
         style={{ borderLeftWidth: 5, borderLeftColor: color }}
       >
         <div className="p-2 bg-slate-50/80 rounded-xl">
-          <img src={icon} className="size-10" />
+          <img src={icon} className="size-8" />
         </div>
 
         <div className="flex flex-col items-start">

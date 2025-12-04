@@ -19,7 +19,10 @@ export const HistoryDetails = ({ device, history }: Props) => {
       <div className="flex flex-row items-center justify-between">
         <h3 className="font-semibold text-lg">{history.title}</h3>
 
-        <div className={`bg-${statusColor}-400 px-4 py-2 rounded-lg`}>
+        <div
+          className={` px-4 py-2 rounded-lg`}
+          style={{ backgroundColor: statusColor }}
+        >
           <h2 className="font-bold text-white">
             {getDeviceStatusText(device?.status || "no_power")}
           </h2>

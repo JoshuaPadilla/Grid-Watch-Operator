@@ -22,7 +22,7 @@ function AddDevicePopup({ show, hideAddDevice }: Props) {
     <div
       className={`${
         show ? "" : "hidden"
-      } absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 bg-slate-300/80 z-1000000 rounded-xl`}
+      } absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 bg-white/80 z-1000000 rounded-xl backdrop-blur-3xl`}
     >
       <h3 className="font-bold text-(--background) text-xl">Add Device</h3>
 

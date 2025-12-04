@@ -6,16 +6,16 @@ import {
 export const getDeviceStatusColor = (status?: DeviceStatusType) => {
   switch (status) {
     case DEVICE_STATUS.NO_POWER:
-      return "red";
+      return "#ff6467";
     case DEVICE_STATUS.FLUCTUATING:
-      return "yellow";
+      return "#fdc700";
     case DEVICE_STATUS.STABLE:
-      return "green";
+      return "#05df72";
     case DEVICE_STATUS.HIGH:
-      return "yellow";
+      return "#fdc700";
     case DEVICE_STATUS.LOW:
-      return "yellow";
+      return "#fdc700";
     default:
-      return "red";
+      return "#ff6467";
   }
 };

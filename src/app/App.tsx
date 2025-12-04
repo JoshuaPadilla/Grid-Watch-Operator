@@ -27,8 +27,6 @@ function App() {
       {activeNav === NAVIGATION.DASHBOARD && <Dashboard />}
       {activeNav === NAVIGATION.HISTORY && <History />}
       {activeNav === NAVIGATION.INSIGHTS && <Insights />}
-
-      <AddDevicePopup show={showAddDevice} hideAddDevice={setShowAddDevice} />
     </>
   );
 }

@@ -1,8 +1,6 @@
-import React from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import MapCenterController from "./mapCenterController";
 import type { Device } from "../interfaces/device.interface";
-import { popupIcon } from "./popupIcon";
 import { getDevicePopUpIcon } from "../app/helpers/getDevicePopUpIcon";
 
 interface Props {
@@ -10,7 +8,7 @@ interface Props {
 }
 
 export const HistoryMap = ({ device }: Props) => {
-  const icon = getDevicePopUpIcon(device.status);
+  const icon = getDevicePopUpIcon(device?.status);
   return (
     <MapContainer
       center={[12.067464704041424, 124.5924237721899]}
