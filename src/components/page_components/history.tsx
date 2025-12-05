@@ -10,7 +10,7 @@ import { SearchBar } from "../search_bar";
 import { HistoryFilter } from "../history_filter";
 import { HistoryInsightss } from "../history_insights";
 
-const History = () => {
+const HistoryComponent = () => {
   const { getAllHistory, history, selectedHistory } = useHistoryStore();
 
   const [device, setDevice] = useState<Device | undefined>(undefined);
@@ -80,4 +80,4 @@ const History = () => {
   );
 };
 
-export default History;
+export default HistoryComponent;

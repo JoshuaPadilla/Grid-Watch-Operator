@@ -7,7 +7,7 @@ function Header() {
   const { activeNav } = useNavStore();
 
   return (
-    <header className="p-2 bg-(--background) flex flex-row justify-between border-b-2 border-b-(--card_bg)">
+    <header className="p-4 bg-(--background) flex flex-row justify-between border-b-2 border-b-(--card_bg)">
       <div className="p-2 flex flex-row gap-4 items-center">
         <img src={Icons.app_logo} alt="app logo" className="size-10" />
         <h3 className="font-bold text-white text-2xl">
@@ -17,7 +17,7 @@ function Header() {
         </h3>
       </div>
 
-      <div>
+      <div className="mr-2">
         <ul className="flex flex-row gap-4 text-white font-medium h-full items-center">
           <li>
             <button

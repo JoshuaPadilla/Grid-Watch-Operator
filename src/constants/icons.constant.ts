@@ -7,6 +7,10 @@ import notif from "../assets/icons/history_notif.png";
 import outage from "../assets/icons/history_outage.png";
 import restored from "../assets/icons/history_restored.png";
 import search from "../assets/icons/search.png";
+import insights_device from "../assets/icons/insights_device.png";
+import insights_outage from "../assets/icons/insights_outage.png";
+import insights_restored from "../assets/icons/insights_restored.png";
+import insights_stable from "../assets/icons/insights_stable.png";
 
 interface IconsState {
   app_logo: string;
@@ -18,6 +22,10 @@ interface IconsState {
   outage: string;
   restored: string;
   search: string;
+  insights_device: string;
+  insights_outage: string;
+  insights_restored: string;
+  insights_stable: string;
 }
 
 export const Icons: IconsState = {
@@ -30,4 +38,8 @@ export const Icons: IconsState = {
   outage,
   restored,
   search,
+  insights_device,
+  insights_outage,
+  insights_restored,
+  insights_stable,
 };

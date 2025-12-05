@@ -25,8 +25,8 @@ export const getDevicePopUpIcon = (status?: DeviceStatusType) => {
       return L.icon({
         iconUrl: Icons.popup_safe,
         iconSize: [50, 50], // Size of the icon
-        iconAnchor: [16, 32], // Point of the icon which will correspond to marker's location
-        popupAnchor: [0, -32], // Point from which the popup should open relative to the iconAnchor
+        iconAnchor: [16, 50], // Point of the icon which will correspond to marker's location
+        popupAnchor: [0, -50], // Point from which the popup should open relative to the iconAnchor
       });
     case DEVICE_STATUS.HIGH:
       return L.icon({
