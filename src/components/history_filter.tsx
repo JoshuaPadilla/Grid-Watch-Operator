@@ -12,7 +12,7 @@ export const HistoryFilter = () => {
     <select
       id="fruits"
       name="favorite_fruit"
-      className="px-2 py-1 rounded-md bg-white/80 backdrop-blur-2xl outline-none font-medium text-md "
+      className="px-2 py-1 rounded-md bg-white/80 backdrop-blur-2xl outline-none font-medium text-md h-fit"
       onChange={(e) => handleChangeFilter(e.target.value)}
     >
       <option value="Today">Today</option>

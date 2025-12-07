@@ -19,7 +19,7 @@ export const InsightsNumbers = () => {
   }, [getInsightsNumbers]);
 
   return (
-    <div className="h-[40%] flex flex-col gap-4">
+    <div className="min-h-[40%] flex flex-col gap-4">
       {/* filters */}
       <div className="flex-1 flex flex-row justify-between h-[30%] items-center">
         <InsightsDatePicker />
