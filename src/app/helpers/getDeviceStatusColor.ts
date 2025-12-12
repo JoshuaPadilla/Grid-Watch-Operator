@@ -11,8 +11,10 @@ export const getDeviceStatusColor = (status?: DeviceStatusType) => {
       return "#fdc700";
     case DEVICE_STATUS.STABLE:
       return "#05df72";
-    case DEVICE_STATUS.HIGH:
-      return "#fdc700";
+    case DEVICE_STATUS.HIGH_VOLTAGE:
+      return "#ff6467";
+    case DEVICE_STATUS.CURRENT_OVERLOAD:
+      return "#ff6467";
     case DEVICE_STATUS.LOW:
       return "#fdc700";
     default:

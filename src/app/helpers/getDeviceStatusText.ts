@@ -11,8 +11,10 @@ export const getDeviceStatusText = (status: DeviceStatusType) => {
       return "Fluctiating Power";
     case DEVICE_STATUS.STABLE:
       return "Stable";
-    case DEVICE_STATUS.HIGH:
-      return "High Power";
+    case DEVICE_STATUS.HIGH_VOLTAGE:
+      return "High Voltage";
+    case DEVICE_STATUS.CURRENT_OVERLOAD:
+      return "Current Overloading";
     case DEVICE_STATUS.LOW:
       return "Low Power";
     default:

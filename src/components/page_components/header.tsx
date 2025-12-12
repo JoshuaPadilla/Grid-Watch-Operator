@@ -3,8 +3,7 @@ import { useNavStore } from "../../store/useNavStore";
 import { NAVIGATION } from "../../types/nav.type";
 
 function Header() {
-  const { changeNav } = useNavStore();
-  const { activeNav } = useNavStore();
+  const { changeNav, activeNav } = useNavStore();
 
   return (
     <header className="p-4 bg-(--background) flex flex-row justify-between border-b-2 border-b-(--card_bg)">
@@ -21,7 +20,7 @@ function Header() {
         <ul className="flex flex-row gap-4 text-white font-medium h-full items-center">
           <li>
             <button
-              onClick={() => changeNav(NAVIGATION.DASHBOARD)}
+              onClick={() => changeNav(NAVIGATION.DASHBOARD, true)}
               className="py-2 px-4 bg-(--primary) rounded-lg"
             >
               Dashboard
@@ -29,7 +28,7 @@ function Header() {
           </li>
           <li>
             <button
-              onClick={() => changeNav(NAVIGATION.HISTORY)}
+              onClick={() => changeNav(NAVIGATION.HISTORY, true)}
               className="py-2 px-4 bg-(--primary) rounded-lg"
             >
               History
@@ -37,7 +36,7 @@ function Header() {
           </li>
           <li>
             <button
-              onClick={() => changeNav(NAVIGATION.INSIGHTS)}
+              onClick={() => changeNav(NAVIGATION.INSIGHTS, true)}
               className="py-2 px-4 bg-(--primary) rounded-lg"
             >
               Insights

@@ -11,6 +11,12 @@ function App() {
   const { activeNav } = useNavStore();
 
   useEffect(() => {
+    socket.on("changeDeviceStatus", (data) => {
+      console.log(data);
+    });
+  }, []);
+
+  useEffect(() => {
     if (socket.connected) {
       socket.connect();
     }

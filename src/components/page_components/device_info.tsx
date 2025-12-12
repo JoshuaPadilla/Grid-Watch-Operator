@@ -19,11 +19,14 @@ import {
   ScaleLoader,
 } from "react-spinners";
 import socket from "../../lib/socket";
+import { useNavStore } from "../../store/useNavStore";
+import { NAVIGATION } from "../../types/nav.type";
 
 function DeviceInfo() {
   const { focusedDevice } = useDeviceStore();
   const [voltageData, setVoltageData] = useState(0);
   const [currentData, setCurrentData] = useState(0);
+  const { changeNav } = useNavStore();
 
   const {
     deviceLast20Payloads,
@@ -59,6 +62,10 @@ function DeviceInfo() {
     });
   }, [updateDeviceLast20Payloads]);
 
+  const handleViewReport = () => {
+    changeNav(NAVIGATION.INSIGHTS, false);
+  };
+
   const deviceFields = [
     { label: "Device ID:", value: focusedDevice?.deviceId, size: "text-xl" },
     { label: "Status:", value: focusedDevice?.status, size: "text-xl" },
@@ -84,7 +91,14 @@ function DeviceInfo() {
   return (
     <div className="flex flex-row flex-1 gap-2 h-full overflow-clip">
       {/* Device info */}
-      <div className="bg-(--card_bg) flex-1 p-4 rounded-sm min-w-[40%]">
+      <div className="relative bg-(--card_bg) flex-1 p-4 rounded-sm min-w-[40%]">
+        <button
+          className="px-4 py-1 bg-(--primary) rounded-sm text-white text-md font-semibold absolute right-8 hover:bg-(--primary)/40"
+          onClick={handleViewReport}
+        >
+          View Report
+        </button>
+
         <h3 className="text-white font-semibold text-2xl mb-2">Device Info</h3>
 
         <div className="grid grid-cols-3 gap-2 text-white">
