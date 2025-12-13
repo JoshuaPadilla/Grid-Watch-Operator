@@ -1,113 +1,61 @@
 import { colors } from "@mui/material";
+import { teal } from "@mui/material/colors";
 import { BarChart } from "@mui/x-charts";
-import React from "react";
+import React, { useEffect } from "react";
+import { useInsightsStore } from "../store/useInsightsStore";
 
 const chartSetting = {
   yAxis: [
     {
-      label: "rainfall (mm)",
+      label: "Count",
       width: 60,
+      tickLabelStyle: {
+        fill: "#FFF",
+      },
     },
   ],
-  series: [{ dataKey: "seoul", label: "Seoul rainfall", color: "#359eff" }],
-  height: 300,
+  series: [
+    { dataKey: "outage", label: "Outage", color: "#ff6467" },
+    { dataKey: "restored", label: "restored", color: "#05df72" },
+  ],
   margin: { left: 0 },
+  borderRadius: 5,
 };
 
-const dataset = [
-  {
-    london: 59,
-    paris: 57,
-    newYork: 86,
-    seoul: 21,
-    month: "Jan",
-  },
-  {
-    london: 50,
-    paris: 52,
-    newYork: 78,
-    seoul: 28,
-    month: "Feb",
-  },
-  {
-    london: 47,
-    paris: 53,
-    newYork: 106,
-    seoul: 41,
-    month: "Mar",
-  },
-  {
-    london: 54,
-    paris: 56,
-    newYork: 92,
-    seoul: 73,
-    month: "Apr",
-  },
-  {
-    london: 57,
-    paris: 69,
-    newYork: 92,
-    seoul: 99,
-    month: "May",
-  },
-  {
-    london: 60,
-    paris: 63,
-    newYork: 103,
-    seoul: 144,
-    month: "June",
-  },
-  {
-    london: 59,
-    paris: 60,
-    newYork: 105,
-    seoul: 319,
-    month: "July",
-  },
-  {
-    london: 65,
-    paris: 60,
-    newYork: 106,
-    seoul: 249,
-    month: "Aug",
-  },
-  {
-    london: 51,
-    paris: 51,
-    newYork: 95,
-    seoul: 131,
-    month: "Sept",
-  },
-  {
-    london: 60,
-    paris: 65,
-    newYork: 97,
-    seoul: 55,
-    month: "Oct",
-  },
-  {
-    london: 67,
-    paris: 64,
-    newYork: 76,
-    seoul: 48,
-    month: "Nov",
-  },
-  {
-    london: 61,
-    paris: 70,
-    newYork: 103,
-    seoul: 25,
-    month: "Dec",
-  },
-];
-
 export const DeviceReportDetails = () => {
+  const { getBarChartData, barChartData } = useInsightsStore();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      getBarChartData("week");
+    };
+
+    fetchData();
+  }, [getBarChartData]);
+
   return (
     <div className="row-span-2 col-span-2 bg-white/20 rounded-xl">
       <BarChart
-        dataset={dataset}
-        xAxis={[{ dataKey: "month" }]}
+        dataset={barChartData}
+        xAxis={[
+          {
+            dataKey: "name",
+            tickLabelStyle: {
+              fill: "#FFF",
+            },
+            disableTicks: true,
+          },
+        ]}
+        grid={{ horizontal: false, vertical: false }}
         {...chartSetting}
+        sx={{
+          "& .MuiChartsAxis-line": {
+            display: "none",
+          },
+          "& .MuiChartsAxis-tick": {
+            display: "none",
+          },
+        }}
       />
     </div>
   );

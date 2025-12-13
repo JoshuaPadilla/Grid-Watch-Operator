@@ -26,7 +26,7 @@ function DeviceInfo() {
   const { focusedDevice } = useDeviceStore();
   const [voltageData, setVoltageData] = useState(0);
   const [currentData, setCurrentData] = useState(0);
-  const { changeNav } = useNavStore();
+  const { changeNav, setShowDeviceReport } = useNavStore();
 
   const {
     deviceLast20Payloads,
@@ -63,7 +63,7 @@ function DeviceInfo() {
   }, [updateDeviceLast20Payloads]);
 
   const handleViewReport = () => {
-    changeNav(NAVIGATION.INSIGHTS, false);
+    setShowDeviceReport(true);
   };
 
   const deviceFields = [

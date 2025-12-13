@@ -8,7 +8,7 @@ import { Insights } from "../components/page_components/insights";
 import HistoryComponent from "../components/page_components/history";
 
 function App() {
-  const { activeNav } = useNavStore();
+  const { activeNav, showDeviceReport } = useNavStore();
 
   useEffect(() => {
     socket.on("changeDeviceStatus", (data) => {
@@ -24,7 +24,7 @@ function App() {
 
   return (
     <>
-      <Header />
+      {!showDeviceReport && <Header />}
       {activeNav === NAVIGATION.DASHBOARD && <Dashboard />}
       {activeNav === NAVIGATION.HISTORY && <HistoryComponent />}
       {activeNav === NAVIGATION.INSIGHTS && <Insights />}
