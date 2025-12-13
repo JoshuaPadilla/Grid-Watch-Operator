@@ -21,38 +21,48 @@ import {
 import socket from "../../lib/socket";
 import { useNavStore } from "../../store/useNavStore";
 import { NAVIGATION } from "../../types/nav.type";
+import type { DevicePayload } from "../../interfaces/device_payload.interface";
 
 function DeviceInfo() {
   const { focusedDevice } = useDeviceStore();
   const [voltageData, setVoltageData] = useState(0);
   const [currentData, setCurrentData] = useState(0);
   const { changeNav, setShowDeviceReport } = useNavStore();
+  const [chartsData, setChartsData] = useState<DevicePayload[]>([]);
 
-  const {
-    deviceLast20Payloads,
-    loading,
-    updateDeviceLast20Payloads,
-    getLatestPayload,
-  } = usePayloadStore();
+  const { getDeviceLast20Payloads, loading } = usePayloadStore();
 
   useEffect(() => {
     const fetchLatestPayload = async () => {
       if (focusedDevice) {
-        const latestPayload = await getLatestPayload(focusedDevice.deviceId);
+        const last20Payloads = await getDeviceLast20Payloads(
+          focusedDevice.deviceId
+        );
 
-        if (latestPayload) {
-          setCurrentData(latestPayload.current);
-          setVoltageData(latestPayload.voltage);
+        if (last20Payloads) {
+          setChartsData(last20Payloads);
+          setCurrentData(last20Payloads[0].current);
+          setVoltageData(last20Payloads[0].voltage);
         }
       }
     };
 
     fetchLatestPayload();
-  }, [focusedDevice, getLatestPayload]);
+  }, []);
+
+  const updateChartsData = (payload: DevicePayload) => {
+    setChartsData((prev) => {
+      const toKeep = prev.slice(0, -1);
+
+      const updatedArray = [payload, ...toKeep];
+
+      return updatedArray;
+    });
+  };
 
   useEffect(() => {
-    socket.on("sensorPayload", (data) => {
-      updateDeviceLast20Payloads(data);
+    socket.on("sensorPayload", (data: DevicePayload) => {
+      updateChartsData(data);
       setCurrentData(data.current);
       setVoltageData(data.voltage);
     });
@@ -60,15 +70,15 @@ function DeviceInfo() {
     socket.on("notification", (data) => {
       console.log(data);
     });
-  }, [updateDeviceLast20Payloads]);
+  }, []);
 
   const handleViewReport = () => {
     setShowDeviceReport(true);
   };
 
   const deviceFields = [
-    { label: "Device ID:", value: focusedDevice?.deviceId, size: "text-xl" },
-    { label: "Status:", value: focusedDevice?.status, size: "text-xl" },
+    { label: "Device ID:", value: focusedDevice?.deviceId, size: "text-lg" },
+    { label: "Status:", value: focusedDevice?.status, size: "text-lg" },
     {
       label: "Location:",
       value: `${focusedDevice?.locationName?.road} ${focusedDevice?.locationName?.brgy}, ${focusedDevice?.locationName?.city}`,
@@ -79,12 +89,12 @@ function DeviceInfo() {
       value: `${focusedDevice?.locationCoordinates?.lat || ""}, ${
         focusedDevice?.locationCoordinates?.lng || ""
       }`,
-      size: "text-xl",
+      size: "text-lg",
     },
     {
       label: "Date Installed:",
       value: formatDate(focusedDevice?.createdAt || ""),
-      size: "text-xl",
+      size: "text-lg",
     },
   ];
 
@@ -101,7 +111,7 @@ function DeviceInfo() {
 
         <h3 className="text-white font-semibold text-2xl mb-2">Device Info</h3>
 
-        <div className="grid grid-cols-3 gap-2 text-white">
+        <div className="grid grid-cols-3 gap-1 text-white">
           {deviceFields.map((item) => (
             <>
               <p className={`${item.size} text-left`}>{item.label}</p>
@@ -140,11 +150,11 @@ function DeviceInfo() {
             <div className="overflow-x-auto hide-scrollbar">
               <AreaChart
                 style={{
-                  width: deviceLast20Payloads.length * 40,
+                  width: chartsData.length * 40,
                   height: 180,
                 }}
                 responsive
-                data={deviceLast20Payloads}
+                data={chartsData}
                 margin={{
                   top: 20,
                   right: 0,
@@ -201,11 +211,11 @@ function DeviceInfo() {
             <div className="overflow-x-auto hide-scrollbar">
               <AreaChart
                 style={{
-                  width: deviceLast20Payloads.length * 40,
+                  width: chartsData.length * 40,
                   height: 180,
                 }}
                 responsive
-                data={deviceLast20Payloads}
+                data={chartsData}
                 margin={{
                   top: 20,
                   right: 0,

@@ -1,11 +1,12 @@
 import { create } from "zustand";
 import type { DevicePayload } from "../interfaces/device_payload.interface";
 import { BASE_URL } from "../constants/base_url.constant";
+import type { Payload } from "recharts/types/component/DefaultTooltipContent";
 
 interface StoreState {
   loading: boolean;
   deviceLast20Payloads: DevicePayload[];
-  getDeviceLast20Payloads: (deviceId: string) => void;
+  getDeviceLast20Payloads: (deviceId: string) => Promise<DevicePayload[]>;
   updateDeviceLast20Payloads: (payload: DevicePayload) => void;
   getLatestPayload: (deviceId: string) => Promise<DevicePayload | null>;
 }
@@ -23,7 +24,7 @@ export const usePayloadStore = create<StoreState>((set, get) => ({
       const data = await res.json();
 
       if (res.ok) {
-        set({ deviceLast20Payloads: data });
+        return data;
       }
     } catch (error) {
       console.log(error);

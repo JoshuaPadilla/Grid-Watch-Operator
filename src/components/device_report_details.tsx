@@ -34,7 +34,7 @@ export const DeviceReportDetails = () => {
   }, [getBarChartData]);
 
   return (
-    <div className="row-span-2 col-span-2 bg-white/20 rounded-xl">
+    <div className="bg-white/20 rounded-xl h-full">
       <BarChart
         dataset={barChartData}
         xAxis={[

@@ -19,7 +19,7 @@ const Dashboard = () => {
       {showDeviceReport ? (
         <DeviceReport />
       ) : (
-        <div className="grid grid-cols-9 grid-rows-6 w-full h-screen bg-(--background) gap-2 p-8">
+        <div className="grid grid-cols-9 grid-rows-6 w-full h-dvh bg-(--background) gap-2 p-6">
           <div
             className={`col-span-6 ${
               focusedDevice ? "row-span-3" : "row-span-6"
