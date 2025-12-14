@@ -1,7 +1,13 @@
 import React from "react";
 import { DeviceReportCard } from "./device_report_card";
+import { useInsightsStore } from "../store/useInsightsStore";
 
 export const DeviceReportCardContainer = () => {
+  const { barChartData } = useInsightsStore();
+
+  const total = barChartData.length;
+
+  const outageRelativeValue = barChartData.filter((item) => item.outage);
   return (
     <div className=" row-start-6 row-span-2 col-span-2  flex flex-row gap-4 h-full">
       <DeviceReportCard
