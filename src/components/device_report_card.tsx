@@ -26,7 +26,7 @@ export const DeviceReportCard = ({
 
       <LinearProgress
         variant="determinate"
-        value={value}
+        value={percentageValue}
         sx={{
           height: 20, // Thicker bar
           borderRadius: 2, // Rounded corners

@@ -12,12 +12,13 @@ import {
 import { usePayloadStore } from "../store/usePayloadStore";
 import { useInsightsStore } from "../store/useInsightsStore";
 import { HistoryFilter } from "./history_filter";
+import { useDeviceStore } from "../store/useDeviceStore";
 
 export const InsightsLineChart = () => {
   const { getOutagesFrequency, outagesFrequency } = useInsightsStore();
 
   useEffect(() => {
-    getOutagesFrequency();
+    getOutagesFrequency("all");
   }, [getOutagesFrequency]);
 
   return (
@@ -31,12 +32,10 @@ export const InsightsLineChart = () => {
 
           <p className="font-medium text-red-400 text-xl">+ 4.9%</p>
         </div>
-
-        <HistoryFilter />
       </div>
 
       {/* chart container */}
-      <div className="pb-4">
+      <div className="pb-4 ">
         <LineChart
           style={{
             width: "100%",
@@ -65,12 +64,12 @@ export const InsightsLineChart = () => {
             style={{ fontSize: "16px", fill: "#999999" }}
           />
 
-          {/* <Line type="monotone" dataKey="count" stroke="#FFF" strokeWidth={2} /> */}
+          {/* <Line type="monotonx`e" dataKey="count" stroke="#FFF" strokeWidth={2} /> */}
 
           <Line
             type="monotone" // Creates the smooth curve
             dataKey="count"
-            stroke="#FFF" // The main color of the line (adjust as needed)
+            stroke="#359eff" // The main color of the line (adjust as needed)
             strokeWidth={2} // Slightly thicker line
             dot={false} // Remove the data point dots (crucial for this style)
             activeDot={{

@@ -5,22 +5,19 @@ import { useInsightsStore } from "../store/useInsightsStore";
 export const DeviceReportCardContainer = () => {
   const { barChartData } = useInsightsStore();
 
-  const total = barChartData.length;
-
-  const outageRelativeValue = barChartData.filter((item) => item.outage);
   return (
     <div className=" row-start-6 row-span-2 col-span-2  flex flex-row gap-4 h-full">
       <DeviceReportCard
-        percentageValue={20}
+        percentageValue={Math.floor(barChartData?.relativeOutageValue || 0)}
         title="Outage Recorded"
-        value={20}
+        value={barChartData?.totalOutage || 0}
         emptyColor="#b9f8cf"
         valueColor="#05df72"
       />
       <DeviceReportCard
-        percentageValue={18}
+        percentageValue={Math.ceil(barChartData?.relativeRestoredValue || 0)}
         title="Restored Grids"
-        value={18}
+        value={barChartData?.totalRestored || 0}
         emptyColor="#ffc9c9"
         valueColor="#ff6467"
       />

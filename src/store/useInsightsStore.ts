@@ -7,22 +7,22 @@ import type { BarChartData } from "../interfaces/barchart_data.interface";
 interface StoreState {
   loading: boolean;
   outagesFrequency: OutagesFrequency[];
-  barChartData: BarChartData[];
+  barChartData: BarChartData | undefined;
   insightsNumbers: InsightsNumbers | undefined;
-  getInsightsNumbers: () => void;
-  getOutagesFrequency: () => void;
-  getBarChartData: (filter: string) => void;
+  getInsightsNumbers: (filter: string) => void;
+  getOutagesFrequency: (filter: string) => void;
+  getBarChartData: (deviceId: string, filter: string) => void;
 }
 
 export const useInsightsStore = create<StoreState>((set) => ({
-  barChartData: [],
+  barChartData: undefined,
   outagesFrequency: [],
   loading: false,
   insightsNumbers: undefined,
-  getInsightsNumbers: async () => {
+  getInsightsNumbers: async (filter) => {
     try {
       set({ loading: true });
-      const res = await fetch(`${BASE_URL}insights`, {
+      const res = await fetch(`${BASE_URL}insights?filter=${filter}`, {
         method: "Get",
       });
 
@@ -38,12 +38,15 @@ export const useInsightsStore = create<StoreState>((set) => ({
     }
   },
 
-  getOutagesFrequency: async () => {
+  getOutagesFrequency: async (filter) => {
     try {
       set({ loading: true });
-      const res = await fetch(`${BASE_URL}insights/outages_frequency`, {
-        method: "Get",
-      });
+      const res = await fetch(
+        `${BASE_URL}insights/outages_frequency?filter=${filter}`,
+        {
+          method: "Get",
+        }
+      );
 
       const data = await res.json();
 
@@ -56,19 +59,17 @@ export const useInsightsStore = create<StoreState>((set) => ({
       set({ loading: false });
     }
   },
-  getBarChartData: async (filter) => {
+  getBarChartData: async (deviceId, filter) => {
     try {
       set({ loading: true });
       const res = await fetch(
-        `${BASE_URL}insights/outage_barchart_data?filter=${filter}`,
+        `${BASE_URL}insights/outage_barchart_data/${deviceId}?filter=${filter}`,
         {
           method: "Get",
         }
       );
 
       const data = await res.json();
-
-      console.log(data);
 
       if (res.ok) {
         set({ barChartData: data });

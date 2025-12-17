@@ -15,15 +15,13 @@ export const InsightsNumbers = () => {
   const { insightsNumbers, getInsightsNumbers, loading } = useInsightsStore();
 
   useEffect(() => {
-    getInsightsNumbers();
+    getInsightsNumbers("all");
   }, [getInsightsNumbers]);
 
   return (
     <div className="min-h-[40%] flex flex-col gap-4">
       {/* filters */}
       <div className="flex-1 flex flex-row justify-between h-[30%] items-center">
-        <InsightsDatePicker />
-
         <div className="bg-(--card_bg) w-[20%] h-full"></div>
       </div>
 

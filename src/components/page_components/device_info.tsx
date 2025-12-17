@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDeviceStore } from "../../store/useDeviceStore";
 import { formatDate } from "../../app/helpers/date_formatter";
 import {
@@ -9,18 +9,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { payload } from "../../app/dev-data/payload-data";
 import { usePayloadStore } from "../../store/usePayloadStore";
-import {
-  ClipLoader,
-  MoonLoader,
-  PacmanLoader,
-  PuffLoader,
-  ScaleLoader,
-} from "react-spinners";
+import { MoonLoader } from "react-spinners";
 import socket from "../../lib/socket";
 import { useNavStore } from "../../store/useNavStore";
-import { NAVIGATION } from "../../types/nav.type";
 import type { DevicePayload } from "../../interfaces/device_payload.interface";
 
 function DeviceInfo() {
@@ -33,22 +25,28 @@ function DeviceInfo() {
   const { getDeviceLast20Payloads, loading } = usePayloadStore();
 
   useEffect(() => {
-    const fetchLatestPayload = async () => {
-      if (focusedDevice) {
-        const last20Payloads = await getDeviceLast20Payloads(
-          focusedDevice.deviceId
-        );
+    if (!focusedDevice) {
+      console.log("no focused device!");
+      return;
+    }
 
-        if (last20Payloads) {
-          setChartsData(last20Payloads);
-          setCurrentData(last20Payloads[0].current);
-          setVoltageData(last20Payloads[0].voltage);
-        }
+    const fetchLatestPayload = async () => {
+      const last20Payloads = await getDeviceLast20Payloads(
+        focusedDevice.deviceId
+      );
+
+      if (last20Payloads && last20Payloads.length > 0) {
+        setChartsData(last20Payloads);
+        setCurrentData(last20Payloads[0].current);
+        setVoltageData(last20Payloads[0].voltage);
+      } else {
+        setCurrentData(0);
+        setVoltageData(0);
       }
     };
 
     fetchLatestPayload();
-  }, []);
+  }, [focusedDevice?.deviceId]);
 
   const updateChartsData = (payload: DevicePayload) => {
     setChartsData((prev) => {

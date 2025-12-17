@@ -3,6 +3,7 @@ import { teal } from "@mui/material/colors";
 import { BarChart } from "@mui/x-charts";
 import React, { useEffect } from "react";
 import { useInsightsStore } from "../store/useInsightsStore";
+import { useDeviceStore } from "../store/useDeviceStore";
 
 const chartSetting = {
   yAxis: [
@@ -22,10 +23,11 @@ const chartSetting = {
 
 export const DeviceReportDetails = () => {
   const { getBarChartData, barChartData } = useInsightsStore();
+  const { focusedDevice } = useDeviceStore();
 
   useEffect(() => {
     const fetchData = async () => {
-      getBarChartData("week");
+      getBarChartData(focusedDevice?.deviceId || "", "week");
     };
 
     fetchData();
@@ -53,7 +55,7 @@ export const DeviceReportDetails = () => {
 
       <div>
         <BarChart
-          dataset={barChartData}
+          dataset={barChartData?.data || []}
           xAxis={[
             {
               dataKey: "name",

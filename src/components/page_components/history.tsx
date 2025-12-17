@@ -40,7 +40,7 @@ const HistoryComponent = () => {
     ? history.filter((item) => {
         // <-- Change .map() to .filter()
         // Check if the concatenated string contains the query
-        return `${item.title} ${item.body}`.includes(query);
+        return `${item.title} ${item.body} ${item.status}`.includes(query);
       })
     : history;
 
