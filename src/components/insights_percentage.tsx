@@ -1,63 +1,71 @@
 import { PieChart } from "@mui/x-charts";
-
-const data = [
-  { label: "Group A", value: 80, color: "#359eff" },
-  { label: "Group C", value: 20, color: "#ff6467" },
-];
-
-const settings = {
-  width: 400,
-  height: 300,
-  hideLegend: true,
-};
+import { useInsightsStore } from "../store/useInsightsStore";
 
 const InsightsPercentage = () => {
-  return (
-    // ADD relative HERE to make this the positioning context for its children
-    <div className="relative flex-1 bg-white/20 rounded-lg flex flex-col  justify-center p-4">
-      <div className="p-4">
-        <h3 className="text-white font-bold text-2xl mb-2">System Health</h3>
-        <p className="font-medium text-md text-white/50">
-          System is at 80% Health
-        </p>
-      </div>
+	const { insightsNumbers } = useInsightsStore();
 
-      {/* This element is absolutely positioned relative to the new parent.
-          You may need to adjust the '-bottom-[50px]' value after this change. */}
-      <h3 className="text-white font-bold text-5xl mb-2 absolute self-center bottom-32">
-        80%
-      </h3>
+	const totalDevices = insightsNumbers?.totalDevices ?? 0;
+	const stableDevices = insightsNumbers?.stableGrids ?? 0;
+	const unstableDevices = Math.max(totalDevices - stableDevices, 0);
 
-      <PieChart
-        series={[
-          {
-            innerRadius: 100,
-            outerRadius: 200,
-            data,
-            startAngle: -90,
-            endAngle: 90,
-            cornerRadius: 5,
-            cy: 200,
-          },
-        ]}
-        {...settings}
-      />
+	const healthPercentage =
+		totalDevices > 0 ? Math.round((stableDevices / totalDevices) * 100) : 0;
 
-      {/* This element is absolutely positioned relative to the new parent.
-          You may need to adjust the '-bottom-[100px]' value after this change. */}
-      <div className="flex flex-row px-4 absolute bottom-18 justify-between w-[350px] self-center">
-        <div className="flex flex-row gap-2 justify-center items-center">
-          <div className="size-4 bg-(--primary)" />
-          <p className="font-normal text-sm text-white/50">Stable Devices</p>
-        </div>
+	const pieData = [
+		{ label: "Stable", value: stableDevices, color: "#22c55e" },
+		{ label: "Unstable", value: unstableDevices, color: "#fb7185" },
+	];
 
-        <div className="flex flex-row gap-2 justify-center items-center">
-          <div className="size-4 bg-red-400" />
-          <p className="font-normal text-sm text-white/50">Unstable Devices</p>
-        </div>
-      </div>
-    </div>
-  );
+	return (
+		<div className="flex h-full flex-col rounded-2xl border border-slate-100/10 bg-slate-900/55 p-4 backdrop-blur-sm md:p-5">
+			<div>
+				<h3 className="text-xl font-semibold text-slate-100 md:text-2xl">
+					System Health
+				</h3>
+				<p className="text-sm text-slate-300/75">
+					Stability ratio across all monitored devices.
+				</p>
+			</div>
+
+			<div className="relative mt-2 flex flex-1 items-center justify-center overflow-hidden">
+				<PieChart
+					width={260}
+					height={190}
+					hideLegend
+					series={[
+						{
+							innerRadius: 62,
+							outerRadius: 88,
+							data: pieData,
+							startAngle: -110,
+							endAngle: 110,
+							cornerRadius: 4,
+							cx: 130,
+							cy: 112,
+						},
+					]}
+				/>
+
+				<div className="pointer-events-none absolute top-1/2 -translate-y-1/3 text-center">
+					<p className="text-4xl font-bold text-slate-100">
+						{healthPercentage}%
+					</p>
+					<p className="text-xs uppercase tracking-wider text-slate-400">
+						Healthy
+					</p>
+				</div>
+			</div>
+
+			<div className="mt-1 grid grid-cols-2 gap-2 text-xs">
+				<div className="rounded-lg border border-emerald-300/20 bg-emerald-500/10 px-2 py-1.5 text-center text-emerald-200">
+					Stable: {stableDevices}
+				</div>
+				<div className="rounded-lg border border-rose-300/20 bg-rose-500/10 px-2 py-1.5 text-center text-rose-200">
+					Unstable: {unstableDevices}
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default InsightsPercentage;

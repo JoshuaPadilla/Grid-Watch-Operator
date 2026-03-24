@@ -1,89 +1,79 @@
-import moment from "moment";
-import React, { useEffect, useState } from "react";
-import DatePicker from "react-datepicker";
-import { InsightsDatePicker } from "./insights_date_picker";
-import { InsightsNumbersComponents } from "./insights_numbers_components";
+import { useEffect } from "react";
+import { MoonLoader } from "react-spinners";
 import { Icons } from "../constants/icons.constant";
 import { useInsightsStore } from "../store/useInsightsStore";
-import { MoonLoader } from "react-spinners";
+import { InsightsNumbersComponents } from "./insights_numbers_components";
 
 export const InsightsNumbers = () => {
-  const [selectedDate, setSelectedDate] = useState<string>(
-    moment().format("YYYY-MM-DD")
-  );
+	const { insightsNumbers, getInsightsNumbers, loading } = useInsightsStore();
 
-  const { insightsNumbers, getInsightsNumbers, loading } = useInsightsStore();
+	useEffect(() => {
+		getInsightsNumbers("all");
+	}, [getInsightsNumbers]);
 
-  useEffect(() => {
-    getInsightsNumbers("all");
-  }, [getInsightsNumbers]);
+	const metrics = [
+		{
+			icon: Icons.insights_device,
+			title: "Total Devices",
+			value: insightsNumbers?.totalDevices,
+		},
+		{
+			icon: Icons.insights_outage,
+			title: "Outages Recorded",
+			value: insightsNumbers?.outagesReported,
+		},
+		{
+			icon: Icons.insights_stable,
+			title: "Stable Grids",
+			value: insightsNumbers?.stableGrids,
+		},
+		{
+			icon: Icons.insights_restored,
+			title: "Total Restored",
+			value: insightsNumbers?.totalRestored,
+		},
+	];
 
-  return (
-    <div className="min-h-[40%] flex flex-col gap-4">
-      {/* filters */}
-      <div className="flex-1 flex flex-row justify-between h-[30%] items-center">
-        <div className="bg-(--card_bg) w-[20%] h-full"></div>
-      </div>
+	return (
+		<div className="flex flex-col gap-4">
+			<div className="flex flex-wrap items-start justify-between gap-3">
+				<div>
+					<h2 className="text-lg font-semibold text-slate-100 md:text-xl">
+						Network Snapshot
+					</h2>
+					<p className="text-sm text-slate-300/75">
+						A quick health overview of your monitored grid devices.
+					</p>
+				</div>
 
-      {/* NUmbers */}
-      <div className="flex flex-row flex-wrap gap-4 h-[70%]">
-        {loading ? (
-          <MoonLoader
-            size={120}
-            color="
-        #359eff"
-            loading={loading}
-          />
-        ) : (
-          <InsightsNumbersComponents
-            icon={Icons.insights_device}
-            title="Total Devices"
-            value={insightsNumbers?.totalDevices}
-          />
-        )}
-        {loading ? (
-          <MoonLoader
-            size={120}
-            color="
-        #359eff"
-            loading={loading}
-          />
-        ) : (
-          <InsightsNumbersComponents
-            icon={Icons.insights_outage}
-            title="Outages Recorded"
-            value={insightsNumbers?.outagesReported}
-          />
-        )}
-        {loading ? (
-          <MoonLoader
-            size={120}
-            color="
-        #359eff"
-            loading={loading}
-          />
-        ) : (
-          <InsightsNumbersComponents
-            icon={Icons.insights_stable}
-            title="Stable Grids"
-            value={insightsNumbers?.stableGrids}
-          />
-        )}
-        {loading ? (
-          <MoonLoader
-            size={120}
-            color="
-        #359eff"
-            loading={loading}
-          />
-        ) : (
-          <InsightsNumbersComponents
-            icon={Icons.insights_restored}
-            title="Total Restored"
-            value={insightsNumbers?.totalRestored}
-          />
-        )}
-      </div>
-    </div>
-  );
+				<span className="rounded-full border border-sky-300/30 bg-sky-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-sky-200">
+					Live Metrics
+				</span>
+			</div>
+
+			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+				{loading
+					? metrics.map((metric) => (
+							<div
+								key={metric.title}
+								className="flex min-h-36 items-center justify-center rounded-2xl border border-slate-100/10 bg-slate-950/50"
+							>
+								<MoonLoader
+									size={36}
+									color="#359eff"
+									loading={loading}
+								/>
+							</div>
+						))
+					: metrics.map((metric) => (
+							<InsightsNumbersComponents
+								key={metric.title}
+								icon={metric.icon}
+								title={metric.title}
+								value={metric.value}
+							/>
+						))}
+			</div>
+		</div>
+	);
 };

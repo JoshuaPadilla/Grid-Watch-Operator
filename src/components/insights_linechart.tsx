@@ -1,86 +1,85 @@
-import React, { useEffect } from "react";
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Line,
-  LineChart,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { usePayloadStore } from "../store/usePayloadStore";
+import { useEffect } from "react";
+import { Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import { useInsightsStore } from "../store/useInsightsStore";
-import { HistoryFilter } from "./history_filter";
-import { useDeviceStore } from "../store/useDeviceStore";
 
 export const InsightsLineChart = () => {
-  const { getOutagesFrequency, outagesFrequency } = useInsightsStore();
+	const { getOutagesFrequency, outagesFrequency } = useInsightsStore();
 
-  useEffect(() => {
-    getOutagesFrequency("all");
-  }, [getOutagesFrequency]);
+	useEffect(() => {
+		getOutagesFrequency("all");
+	}, [getOutagesFrequency]);
 
-  return (
-    <div className=" flex flex-col col-span-4 row-span-1 bg-white/20 rounded-lg p-6">
-      {/* Header container */}
-      <div className="flex flex-row  justify-between flex-1 mb-4">
-        <div>
-          <h3 className="text-white font-bold text-2xl mb-2">
-            Outages Recorded
-          </h3>
+	return (
+		<div className="flex h-full flex-col rounded-2xl border border-slate-100/10 bg-slate-900/55 p-4 backdrop-blur-sm md:p-5">
+			<div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+				<div>
+					<h3 className="mb-1 text-xl font-semibold text-slate-100 md:text-2xl">
+						Outages Recorded
+					</h3>
 
-          <p className="font-medium text-red-400 text-xl">+ 4.9%</p>
-        </div>
-      </div>
+					<p className="text-sm text-slate-300/75">
+						Detected events by date
+					</p>
+				</div>
 
-      {/* chart container */}
-      <div className="pb-4 ">
-        <LineChart
-          style={{
-            width: "100%",
-            maxWidth: "100%",
-            maxHeight: "300px",
-            aspectRatio: 1.618,
-            left: -40,
-          }}
-          responsive
-          data={outagesFrequency}
-        >
-          <YAxis
-            dataKey="count"
-            domain={[0, "auto"]} // Start from 0, auto-adjust max
-            tickLine={false}
-            axisLine={false}
-            padding={{ top: 15, bottom: 15 }}
-            style={{ fontSize: "16px", fill: "#FFF" }}
-          />
-          <XAxis
-            dataKey="date" // Use the date/name field from your data
-            interval="preserveStartEnd" // Only show labels at the start/end/middle
-            tickLine={false} // Hide the tick mark lines
-            axisLine={false} // Hide the main axis line
-            padding={{ left: 15, right: 15 }}
-            style={{ fontSize: "16px", fill: "#999999" }}
-          />
+				<p className="rounded-full border border-red-300/30 bg-red-500/15 px-3 py-1 text-xs font-semibold text-red-200">
+					+4.9% this cycle
+				</p>
+			</div>
 
-          {/* <Line type="monotonx`e" dataKey="count" stroke="#FFF" strokeWidth={2} /> */}
+			<div className="min-h-0 flex-1 pb-1">
+				<LineChart
+					style={{
+						width: "100%",
+						maxWidth: "100%",
+						height: "100%",
+						left: -28,
+					}}
+					responsive
+					data={outagesFrequency}
+				>
+					<YAxis
+						dataKey="count"
+						domain={[0, "auto"]}
+						tickLine={false}
+						axisLine={false}
+						padding={{ top: 15, bottom: 15 }}
+						style={{ fontSize: "13px", fill: "#cbd5e1" }}
+					/>
+					<XAxis
+						dataKey="date"
+						interval="preserveStartEnd"
+						tickLine={false}
+						axisLine={false}
+						padding={{ left: 15, right: 15 }}
+						style={{ fontSize: "12px", fill: "#94a3b8" }}
+					/>
 
-          <Line
-            type="monotone" // Creates the smooth curve
-            dataKey="count"
-            stroke="#359eff" // The main color of the line (adjust as needed)
-            strokeWidth={2} // Slightly thicker line
-            dot={false} // Remove the data point dots (crucial for this style)
-            activeDot={{
-              r: 4,
-              stroke: "#359eff",
-              fill: "#359eff",
-              strokeWidth: 2,
-            }} // Style for the active dot on hover
-          />
-        </LineChart>
-      </div>
-    </div>
-  );
+					<Tooltip
+						cursor={{ stroke: "#1d4ed8", strokeOpacity: 0.35 }}
+						contentStyle={{
+							background: "rgba(2, 6, 23, 0.9)",
+							border: "1px solid rgba(148, 163, 184, 0.3)",
+							borderRadius: "12px",
+							color: "#e2e8f0",
+						}}
+					/>
+
+					<Line
+						type="monotone"
+						dataKey="count"
+						stroke="#38bdf8"
+						strokeWidth={2.5}
+						dot={false}
+						activeDot={{
+							r: 4,
+							stroke: "#38bdf8",
+							fill: "#38bdf8",
+							strokeWidth: 2,
+						}}
+					/>
+				</LineChart>
+			</div>
+		</div>
+	);
 };
