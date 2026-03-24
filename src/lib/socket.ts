@@ -1,11 +1,11 @@
 import { io } from "socket.io-client";
-import { BASE_URL } from "../constants/base_url.constant";
+import { SOCKET_URL } from "../constants/base_url.constant";
 
-const socketUrl = import.meta.env.VITE_SOCKET_URL || new URL(BASE_URL).origin;
+const socketUrl = import.meta.env.VITE_SOCKET_URL || new URL(SOCKET_URL).origin;
+const rawPath = new URL(SOCKET_URL).pathname;
 const socketPath =
 	import.meta.env.VITE_SOCKET_PATH ||
-	import.meta.env.VITE_SOCKET_IO_PATH ||
-	"/socket.io";
+	(rawPath && rawPath !== "/" ? rawPath : "/socket.io");
 
 const socket = io(socketUrl, {
 	path: socketPath,
