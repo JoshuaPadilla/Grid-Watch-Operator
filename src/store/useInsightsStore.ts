@@ -39,6 +39,7 @@ export const useInsightsStore = create<StoreState>((set) => ({
   },
 
   getOutagesFrequency: async (filter) => {
+    console.log(filter);
     try {
       set({ loading: true });
       const res = await fetch(
