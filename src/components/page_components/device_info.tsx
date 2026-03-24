@@ -272,20 +272,164 @@ function DeviceInfo() {
 			return;
 		}
 
-		const handleSensorPayload = (data: DevicePayload) => {
-			if (data.deviceId !== focusedDeviceId) {
-				return;
-			}
-
-			updateChartsData(data);
-			setCurrentData(data.current);
-			setVoltageData(data.voltage);
+		const joinDeviceRoom = () => {
+			socket.emit("connectDevice", { deviceId: focusedDeviceId });
+			console.log("joined device room:", focusedDeviceId);
 		};
 
+		if (socket.connected) {
+			joinDeviceRoom();
+		}
+
+		socket.on("connect", joinDeviceRoom);
+
+		return () => {
+			socket.off("connect", joinDeviceRoom);
+			socket.emit("disconnectDevice", { deviceId: focusedDeviceId });
+		};
+	}, [focusedDeviceId]);
+
+	useEffect(() => {
+		console.log(
+			"listening for sensorPayload events for focused device:",
+			focusedDeviceId,
+		);
+		if (!focusedDeviceId) {
+			return;
+		}
+
+		const normalizePacket = (
+			packet: unknown,
+			fallbackDeviceId?: string,
+		) => {
+			if (!packet) {
+				return null;
+			}
+
+			let raw: unknown = packet;
+
+			const toRecord = (
+				value: unknown,
+			): Record<string, unknown> | null => {
+				if (!value || typeof value !== "object") {
+					return null;
+				}
+
+				return value as Record<string, unknown>;
+			};
+
+			if (typeof raw === "string") {
+				try {
+					raw = JSON.parse(raw);
+				} catch {
+					return null;
+				}
+			}
+
+			const rawRecord = toRecord(raw);
+			if (!rawRecord) {
+				return null;
+			}
+
+			const rawMessage = toRecord(rawRecord.message);
+			const nested =
+				rawRecord.payload ||
+				rawRecord.data ||
+				rawMessage?.payload ||
+				rawRecord.message;
+			const sourceRecord = toRecord(nested) ?? rawRecord;
+			const sourceDevice = toRecord(sourceRecord.device);
+			const rawDevice = toRecord(rawRecord.device);
+
+			const deviceId =
+				(sourceRecord.deviceId as string | undefined) ||
+				(sourceRecord.deviceID as string | undefined) ||
+				(sourceRecord.device_id as string | undefined) ||
+				(sourceDevice?.deviceId as string | undefined) ||
+				(sourceDevice?.deviceID as string | undefined) ||
+				(sourceDevice?.device_id as string | undefined) ||
+				(rawRecord.deviceId as string | undefined) ||
+				(rawRecord.deviceID as string | undefined) ||
+				(rawRecord.device_id as string | undefined) ||
+				(rawDevice?.deviceId as string | undefined) ||
+				(rawDevice?.deviceID as string | undefined) ||
+				(rawDevice?.device_id as string | undefined) ||
+				fallbackDeviceId;
+
+			const current = Number(sourceRecord.current);
+			const voltage = Number(sourceRecord.voltage);
+
+			if (!deviceId || Number.isNaN(current) || Number.isNaN(voltage)) {
+				return null;
+			}
+
+			return {
+				deviceId,
+				current,
+				voltage,
+				temperature: Number(sourceRecord.temperature ?? 0),
+				createdAt:
+					(sourceRecord.createdAt as string | undefined) ??
+					new Date().toISOString(),
+				localCreatedAt:
+					(sourceRecord.localCreatedAt as string | undefined) ??
+					new Date().toLocaleTimeString(),
+			} as DevicePayload;
+		};
+
+		const handleTelemetryEvent =
+			(eventName: string) => (packet: unknown) => {
+				const normalized = normalizePacket(packet, focusedDeviceId);
+
+				if (!normalized) {
+					if (eventName !== "notification") {
+						console.log(
+							"realtime packet ignored (unsupported shape):",
+							packet,
+						);
+					}
+					return;
+				}
+
+				if (normalized.deviceId !== focusedDeviceId) {
+					return;
+				}
+
+				console.log(
+					"received realtime payload for device:",
+					normalized.deviceId,
+				);
+
+				updateChartsData(normalized);
+				setCurrentData(normalized.current);
+				setVoltageData(normalized.voltage);
+			};
+
+		const handleSensorPayload = handleTelemetryEvent("sensorPayload");
+		const handlePayload = handleTelemetryEvent("payload");
+		const handleNotification = handleTelemetryEvent("notification");
+		const handleSensorPayloadDash = handleTelemetryEvent("sensor-payload");
+		const handleSensorPayloadUnderscore =
+			handleTelemetryEvent("sensor_payload");
+		const handleDevicePayload = handleTelemetryEvent("devicePayload");
+		const handleDevicePayloadDash = handleTelemetryEvent("device-payload");
+
 		socket.on("sensorPayload", handleSensorPayload);
+		socket.on("payload", handlePayload);
+		socket.on("notification", handleNotification);
+		socket.on("sensor-payload", handleSensorPayloadDash);
+		socket.on("sensor_payload", handleSensorPayloadUnderscore);
+		socket.on("devicePayload", handleDevicePayload);
+		socket.on("device-payload", handleDevicePayloadDash);
 
 		return () => {
 			socket.off("sensorPayload", handleSensorPayload);
+			socket.off("payload", handlePayload);
+			socket.off("notification", handleNotification);
+			socket.off("sensor-payload", handleSensorPayloadDash);
+			socket.off("sensor_payload", handleSensorPayloadUnderscore);
+			socket.off("devicePayload", handleDevicePayload);
+			socket.off("device-payload", handleDevicePayloadDash);
 		};
 	}, [focusedDeviceId]);
 
