@@ -1,25 +1,23 @@
-import React, { useState } from "react";
 import { useHistoryStore } from "../store/useHistory";
 
 export const HistoryFilter = () => {
-  const { getAllHistory } = useHistoryStore();
+	const { getAllHistory } = useHistoryStore();
 
-  const handleChangeFilter = (query: string) => {
-    getAllHistory(`filter=${query}`);
-  };
+	const handleChangeFilter = (query: string) => {
+		getAllHistory(`filter=${query}`);
+	};
 
-  return (
-    <select
-      id="fruits"
-      name="favorite_fruit"
-      className="px-2 py-1 rounded-md bg-white/80 backdrop-blur-2xl outline-none font-medium text-md h-fit"
-      onChange={(e) => handleChangeFilter(e.target.value)}
-    >
-      <option value="Today">Today</option>
-      <option value="This Week" selected>
-        This Week
-      </option>
-      <option value="This Month">This Month</option>
-    </select>
-  );
+	return (
+		<select
+			id="history-filter"
+			name="history-filter"
+			defaultValue="This Week"
+			className="h-fit rounded-xl border border-slate-200/10 bg-slate-950/70 px-3 py-2 text-sm font-medium text-slate-100 outline-none backdrop-blur-xl transition hover:border-sky-300/30"
+			onChange={(e) => handleChangeFilter(e.target.value)}
+		>
+			<option value="Today">Today</option>
+			<option value="This Week">This Week</option>
+			<option value="This Month">This Month</option>
+		</select>
+	);
 };
