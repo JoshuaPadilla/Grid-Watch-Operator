@@ -1,111 +1,176 @@
 import { PieChart } from "@mui/x-charts";
-import React, { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import socket from "../lib/socket";
+import { useDeviceStore } from "../store/useDeviceStore";
+
+interface PredictionPayload {
+	deviceId?: string;
+	riskScore?: number;
+}
 
 export const DeviceReportOutagePercentage = () => {
-  const [predictionData, setPredictionData] = useState([
-    { label: "Risk Score", value: 0, color: "#bedbff" },
-    { label: "Stable", value: 100, color: "#51a2ff" },
-  ]);
-  const [riskPercentage, setRiskPercentage] = useState(0);
+	const { focusedDevice } = useDeviceStore();
+	const [predictionData, setPredictionData] = useState([
+		{ label: "Risk Score", value: 0, color: "#bedbff" },
+		{ label: "Stable", value: 100, color: "#51a2ff" },
+	]);
+	const [riskPercentage, setRiskPercentage] = useState(0);
 
-  useEffect(() => {
-    // 2. Define the handler function
-    const handlePrediction = (payload: any) => {
-      // payload = { deviceId: 'sample2', riskScore: 0.12 }
+	const stablePercentage = 100 - riskPercentage;
 
-      if (payload && typeof payload.riskScore === "number") {
-        // Convert 0.12 -> 12
-        const riskPercentage = Math.floor(payload.riskScore * 100);
+	const summary = useMemo(() => {
+		if (riskPercentage >= 70) {
+			return {
+				tone: "High outage risk",
+				detail: "This device should be monitored closely for imminent outages.",
+				badge: "text-rose-200 bg-rose-500/20 border-rose-400/30",
+			};
+		}
 
-        // Calculate remainder: 100 - 12 = 88
-        const remainder = 100 - riskPercentage;
-        setRiskPercentage(riskPercentage);
-        // 3. Update the state (React will re-render the chart automatically)
-        setPredictionData([
-          { label: "Risk Score", value: riskPercentage, color: "#bedbff" },
-          { label: "Stable", value: remainder, color: "#51a2ff" },
-        ]);
-      }
-    };
+		if (riskPercentage >= 35) {
+			return {
+				tone: "Moderate risk",
+				detail: "The device is fluctuating and may require preventative checks.",
+				badge: "text-amber-200 bg-amber-500/20 border-amber-400/30",
+			};
+		}
 
-    // Listen for the event
-    socket.on("prediction", handlePrediction);
+		return {
+			tone: "Low risk",
+			detail: "Current prediction indicates stable operation with low outage likelihood.",
+			badge: "text-emerald-200 bg-emerald-500/20 border-emerald-400/30",
+		};
+	}, [riskPercentage]);
 
-    // 4. CLEANUP: Important to prevent memory leaks!
-    return () => {
-      socket.off("prediction", handlePrediction);
-    };
-  }, []);
+	useEffect(() => {
+		const handlePrediction = (payload: PredictionPayload) => {
+			if (
+				payload.deviceId &&
+				payload.deviceId !== focusedDevice?.deviceId
+			) {
+				return;
+			}
 
-  return (
-    <div className="col-start-4 col-span-2 row-span-3 bg-white/20 rounded-2xl p-6 relative">
-      <h3 className="font-bold text-xl text-white mb-6 text-center">
-        Device Outage Prediction
-      </h3>
+			if (payload && typeof payload.riskScore === "number") {
+				const riskPercentage = Math.floor(payload.riskScore * 100);
+				const remainder = 100 - riskPercentage;
+				setRiskPercentage(riskPercentage);
+				setPredictionData([
+					{
+						label: "Risk Score",
+						value: riskPercentage,
+						color: "#bedbff",
+					},
+					{ label: "Stable", value: remainder, color: "#51a2ff" },
+				]);
+			}
+		};
 
-      {/* body */}
-      <div className="w-full h-full flex flex-row gap-4 ">
-        {/* Pie Chart */}
-        <div className="w-[60%] h-[80%] relative flex justify-center items-center">
-          {/* The h3 is centered both horizontally and vertically here */}
-          <h3 className="text-white font-bold text-4xl mb-2 absolute">
-            {riskPercentage}%
-          </h3>
-          <PieChart
-            slotProps={{
-              legend: { hidden: true } as any,
-            }}
-            sx={{
-              "& .MuiPieArc-root": {
-                stroke: "none", // Removes the border
-              },
-            }}
-            series={[
-              {
-                innerRadius: "60%", // Percentages work for responsive resizing
-                outerRadius: "100%",
-                data: predictionData.map((item, index) => ({
-                  id: index,
-                  value: item.value,
-                  label: item.label,
-                  color: item.color,
-                })),
-                cornerRadius: 5,
-                startAngle: -180,
-                endAngle: 180,
-                paddingAngle: 4,
-              },
-            ]}
-          />
-        </div>
+		socket.on("prediction", handlePrediction);
 
-        {/* Chart Details */}
-        <div className=" max-w-[50%] flex flex-col justify-start items-start">
-          {/* Legends */}
-          <div className="mb-6 flex flex-row gap-3 items-center justify-center">
-            <div className="flex gap-2 items-center">
-              <div className="size-3 bg-blue-200 rounded-full" />
-              <p className="font-semibold text-md text-white">Outage Risk</p>
-            </div>
+		return () => {
+			socket.off("prediction", handlePrediction);
+		};
+	}, [focusedDevice?.deviceId]);
 
-            <div className="flex gap-2 items-center">
-              <div className="size-3 bg-blue-400 rounded-full" />
-              <p className="font-semibold text-md text-white">
-                Stable Percentage
-              </p>
-            </div>
-          </div>
+	return (
+		<section className="flex h-full min-h-88 flex-col overflow-hidden rounded-3xl border border-slate-200/10 bg-slate-900/75 p-4 shadow-xl shadow-black/20 xl:min-h-0">
+			<div className="mb-4 flex items-start justify-between gap-3">
+				<div>
+					<p className="text-xs uppercase tracking-[0.18em] text-slate-400">
+						Forecast
+					</p>
+					<h3 className="text-lg font-semibold text-slate-100">
+						Device Outage Prediction
+					</h3>
+				</div>
+				<span
+					className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide ${summary.badge}`}
+				>
+					{summary.tone}
+				</span>
+			</div>
 
-          {/* Text */}
-          <div className="p-4 bg-sky-300/30 rounded-xl h-[60%]">
-            <p className="font-medium text-white text-justify">
-              Outage percentage is low only at {riskPercentage}% device is
-              stable and expect no power little to no power outage
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+			<div className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[1fr_0.95fr]">
+				<div className="flex min-h-0 flex-col rounded-2xl border border-slate-200/10 bg-slate-950/40 p-4">
+					<div className="relative flex flex-1 items-center justify-center">
+						<h3 className="absolute text-2xl font-bold text-slate-100">
+							{riskPercentage}%
+						</h3>
+						<PieChart
+							height={150}
+							slotProps={{
+								legend: { hidden: true } as any,
+							}}
+							sx={{
+								"& .MuiPieArc-root": {
+									stroke: "none",
+								},
+							}}
+							series={[
+								{
+									innerRadius: "62%",
+									outerRadius: "100%",
+									data: predictionData.map((item, index) => ({
+										id: index,
+										value: item.value,
+										label: item.label,
+										color: item.color,
+									})),
+									cornerRadius: 6,
+									startAngle: -180,
+									endAngle: 180,
+									paddingAngle: 4,
+								},
+							]}
+						/>
+					</div>
+
+					<div className="grid grid-cols-2 gap-2 text-sm">
+						<div className="rounded-xl border border-slate-200/10 bg-slate-900/80 px-3 py-2">
+							<p className="text-slate-400">Outage Risk</p>
+							<p className="mt-1 font-semibold text-slate-100">
+								{riskPercentage}%
+							</p>
+						</div>
+						<div className="rounded-xl border border-slate-200/10 bg-slate-900/80 px-3 py-2">
+							<p className="text-slate-400">Stable Window</p>
+							<p className="mt-1 font-semibold text-slate-100">
+								{stablePercentage}%
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div className="flex min-h-0 flex-col gap-3">
+					<div className="rounded-2xl border border-slate-200/10 bg-slate-950/40 p-3">
+						<p className="text-xs uppercase tracking-[0.16em] text-slate-400">
+							Interpretation
+						</p>
+						<p className="mt-2 text-sm leading-5 text-slate-200">
+							{summary.detail}
+						</p>
+					</div>
+
+					<div className="grid gap-2 text-sm">
+						<div className="rounded-xl border border-slate-200/10 bg-slate-950/40 px-3 py-2">
+							<p className="text-slate-400">Model Split</p>
+							<p className="mt-1 font-semibold text-slate-100">
+								{predictionData[0].label} vs{" "}
+								{predictionData[1].label}
+							</p>
+						</div>
+						<div className="rounded-xl border border-slate-200/10 bg-slate-950/40 px-3 py-2">
+							<p className="text-slate-400">Recommended Action</p>
+							<p className="mt-1 font-semibold text-slate-100">
+								{riskPercentage >= 35
+									? "Inspect grid stability"
+									: "Continue monitoring"}
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	);
 };
