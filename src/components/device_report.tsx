@@ -1,15 +1,12 @@
-import { PieChart } from "@mui/x-charts";
-import React, { useEffect } from "react";
+import { useDeviceStore } from "../store/useDeviceStore";
+import { useInsightsStore } from "../store/useInsightsStore";
+import { useNavStore } from "../store/useNavStore";
+import { ChartFilter } from "./chart_filter";
+import { DeviceReportCardContainer } from "./device_report_card_container";
+import { DeviceReportDetails } from "./device_report_details";
+import { DeviceReportLiveReadingsContainer } from "./device_report_live_readings_container";
 import { DeviceReportMap } from "./device_report_map";
 import { DeviceReportOutagePercentage } from "./device_report_outage_percentage";
-import { DeviceReportDetails } from "./device_report_details";
-import { DeviceReportCardContainer } from "./device_report_card_container";
-import { DeviceReportLiveReadingsContainer } from "./device_report_live_readings_container";
-import { useNavStore } from "../store/useNavStore";
-import socket from "../lib/socket";
-import { ChartFilter } from "./chart_filter";
-import { useInsightsStore } from "../store/useInsightsStore";
-import { useDeviceStore } from "../store/useDeviceStore";
 
 const data = [
 	{ label: "Group C", value: 20, color: "#bedbff" },
