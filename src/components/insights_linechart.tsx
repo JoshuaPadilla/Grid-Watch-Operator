@@ -1,13 +1,9 @@
-import { useEffect } from "react";
 import { Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import { useInsightsStore } from "../store/useInsightsStore";
 
 export const InsightsLineChart = () => {
-	const { getOutagesFrequency, outagesFrequency } = useInsightsStore();
-
-	useEffect(() => {
-		getOutagesFrequency("all");
-	}, [getOutagesFrequency]);
+	const { outagesFrequency } = useInsightsStore();
+	const hasData = outagesFrequency.length > 0;
 
 	return (
 		<div className="flex h-full flex-col rounded-2xl border border-slate-100/10 bg-slate-900/55 p-4 backdrop-blur-sm md:p-5">
@@ -27,7 +23,7 @@ export const InsightsLineChart = () => {
 				</p>
 			</div>
 
-			<div className="min-h-0 flex-1 pb-1">
+			<div className="min-h-72 flex-1 pb-1">
 				<LineChart
 					style={{
 						width: "100%",
@@ -79,6 +75,13 @@ export const InsightsLineChart = () => {
 						}}
 					/>
 				</LineChart>
+				{!hasData && (
+					<div className="pointer-events-none -mt-16 flex justify-center">
+						<p className="rounded-full border border-slate-300/15 bg-slate-900/70 px-3 py-1 text-xs text-slate-300">
+							No outage data in this selected range
+						</p>
+					</div>
+				)}
 			</div>
 		</div>
 	);

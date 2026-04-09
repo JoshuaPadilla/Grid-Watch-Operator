@@ -1,18 +1,37 @@
+import { useEffect, useMemo, useState } from "react";
 import { useInsightsStore } from "../../store/useInsightsStore";
 import { ChartFilter } from "../chart_filter";
 import { InsightsChartsContainer } from "../insights_charts_container";
 import { InsightsNumbers } from "../insights_numbers";
 
 export const Insights = () => {
-	const { getOutagesFrequency, getInsightsNumbers } = useInsightsStore();
+	const { getOutagesFrequency, getInsightsNumbers, loading } =
+		useInsightsStore();
+	const [filter, setFilter] = useState<"week" | "month" | "all">("week");
 
-	const handleOnChangeFilter = (filter: string) => {
+	const filterLabel = useMemo(() => {
+		if (filter === "week") {
+			return "This Week";
+		}
+
+		if (filter === "month") {
+			return "This Month";
+		}
+
+		return "All Time";
+	}, [filter]);
+
+	useEffect(() => {
 		getOutagesFrequency(filter);
 		getInsightsNumbers(filter);
+	}, [filter, getOutagesFrequency, getInsightsNumbers]);
+
+	const handleOnChangeFilter = (filter: string) => {
+		setFilter(filter as "week" | "month" | "all");
 	};
 
 	return (
-		<div className="relative min-h-dvh w-full overflow-x-hidden overflow-y-auto bg-(--background) p-4 md:p-6">
+		<div className="relative h-dvh w-full overflow-x-hidden overflow-y-auto bg-(--background) p-4 md:p-6">
 			<div className="pointer-events-none absolute inset-0">
 				<div className="absolute left-6 top-0 h-56 w-56 rounded-full bg-cyan-500/15 blur-3xl" />
 				<div className="absolute bottom-12 right-8 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
@@ -32,21 +51,32 @@ export const Insights = () => {
 								Track outage movement, recovery trends, and
 								device stability in one place.
 							</p>
+							<div className="mt-2 flex flex-wrap items-center gap-2">
+								<span className="rounded-full border border-slate-300/20 bg-slate-900/60 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-200">
+									Range: {filterLabel}
+								</span>
+								{loading && (
+									<span className="rounded-full border border-sky-300/30 bg-sky-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sky-200">
+										Refreshing
+									</span>
+								)}
+							</div>
 						</div>
 
 						<ChartFilter
 							onChange={handleOnChangeFilter}
+							value={filter}
 							position="static z-auto"
 						/>
 					</div>
 				</section>
 
 				<section className="rounded-3xl border border-slate-100/10 bg-slate-900/35 p-4 shadow-2xl shadow-black/20 md:p-5">
-					<InsightsNumbers />
+					<InsightsNumbers filterLabel={filterLabel} />
 				</section>
 
 				<section className="rounded-3xl border border-slate-100/10 bg-slate-900/35 p-3 shadow-2xl shadow-black/20 md:p-4">
-					<InsightsChartsContainer />
+					<InsightsChartsContainer filterLabel={filterLabel} />
 				</section>
 			</div>
 		</div>

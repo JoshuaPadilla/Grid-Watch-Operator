@@ -1,15 +1,16 @@
-import { useEffect } from "react";
 import { MoonLoader } from "react-spinners";
 import { Icons } from "../constants/icons.constant";
 import { useInsightsStore } from "../store/useInsightsStore";
 import { InsightsNumbersComponents } from "./insights_numbers_components";
 
-export const InsightsNumbers = () => {
-	const { insightsNumbers, getInsightsNumbers, loading } = useInsightsStore();
+interface Props {
+	filterLabel: string;
+}
 
-	useEffect(() => {
-		getInsightsNumbers("all");
-	}, [getInsightsNumbers]);
+export const InsightsNumbers = ({ filterLabel }: Props) => {
+	const { insightsNumbers, loading } = useInsightsStore();
+	const stableGrids =
+		insightsNumbers?.stableGrids ?? insightsNumbers?.stableDevices ?? 0;
 
 	const metrics = [
 		{
@@ -25,7 +26,7 @@ export const InsightsNumbers = () => {
 		{
 			icon: Icons.insights_stable,
 			title: "Stable Grids",
-			value: insightsNumbers?.stableGrids,
+			value: stableGrids,
 		},
 		{
 			icon: Icons.insights_restored,
@@ -47,7 +48,7 @@ export const InsightsNumbers = () => {
 				</div>
 
 				<span className="rounded-full border border-sky-300/30 bg-sky-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-sky-200">
-					Live Metrics
+					{filterLabel}
 				</span>
 			</div>
 

@@ -1,7 +1,11 @@
 import { InsightsLineChart } from "./insights_linechart";
 import InsightsPercentage from "./insights_percentage";
 
-export const InsightsChartsContainer = () => {
+interface Props {
+	filterLabel: string;
+}
+
+export const InsightsChartsContainer = ({ filterLabel }: Props) => {
 	return (
 		<div className="h-fit flex flex-col gap-4">
 			<div className="flex flex-wrap items-start justify-between gap-3 px-1">
@@ -15,7 +19,7 @@ export const InsightsChartsContainer = () => {
 				</div>
 
 				<span className="rounded-full border border-emerald-300/30 bg-emerald-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-200">
-					Predictive View
+					{filterLabel}
 				</span>
 			</div>
 

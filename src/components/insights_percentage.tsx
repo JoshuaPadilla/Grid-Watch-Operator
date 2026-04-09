@@ -5,7 +5,8 @@ const InsightsPercentage = () => {
 	const { insightsNumbers } = useInsightsStore();
 
 	const totalDevices = insightsNumbers?.totalDevices ?? 0;
-	const stableDevices = insightsNumbers?.stableGrids ?? 0;
+	const stableDevices =
+		insightsNumbers?.stableGrids ?? insightsNumbers?.stableDevices ?? 0;
 	const unstableDevices = Math.max(totalDevices - stableDevices, 0);
 
 	const healthPercentage =
