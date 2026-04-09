@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useDeviceStore } from "../store/useDeviceStore";
 import { useInsightsStore } from "../store/useInsightsStore";
 import { useNavStore } from "../store/useNavStore";
@@ -12,17 +13,29 @@ export const DeviceReport = () => {
 	const { setShowDeviceReport } = useNavStore();
 	const { getBarChartData, loading } = useInsightsStore();
 	const { focusedDevice } = useDeviceStore();
+	const [chartFilter, setChartFilter] = useState<"week" | "month" | "all">(
+		"week",
+	);
+
+	useEffect(() => {
+		const focusedDeviceId = focusedDevice?.deviceId;
+		if (!focusedDeviceId) {
+			return;
+		}
+
+		getBarChartData(focusedDeviceId, chartFilter);
+	}, [focusedDevice?.deviceId, chartFilter, getBarChartData]);
 
 	const handleBack = () => {
 		setShowDeviceReport(false);
 	};
 
 	const handleChangeChartFilter = (query: string) => {
-		getBarChartData(focusedDevice?.deviceId || "", query);
+		setChartFilter(query as "week" | "month" | "all");
 	};
 
 	return (
-		<div className="relative min-h-dvh w-full overflow-x-hidden overflow-y-auto bg-(--background) p-4 md:p-6">
+		<div className="relative h-dvh w-full overflow-x-hidden overflow-y-auto bg-(--background) p-4 md:p-6">
 			<div className="pointer-events-none absolute inset-0">
 				<div className="absolute -top-16 left-8 h-56 w-56 rounded-full bg-sky-500/20 blur-3xl" />
 				<div className="absolute bottom-12 right-10 h-72 w-72 rounded-full bg-cyan-500/15 blur-3xl" />
@@ -53,6 +66,7 @@ export const DeviceReport = () => {
 							)}
 							<ChartFilter
 								onChange={handleChangeChartFilter}
+								value={chartFilter}
 								position="static z-auto"
 							/>
 							<button
@@ -86,7 +100,7 @@ export const DeviceReport = () => {
 				</div>
 
 				<section className="hidden rounded-3xl border border-slate-100/10 bg-slate-900/35 p-2 shadow-2xl shadow-black/20 xl:block">
-					<div className="grid h-[calc(100dvh-13.5rem)] min-h-192 grid-cols-12 grid-rows-[1.05fr_0.9fr_0.65fr] gap-4">
+					<div className="grid min-h-0 grid-cols-12 grid-rows-[minmax(22rem,auto)_minmax(18rem,auto)_minmax(14rem,auto)] gap-4 2xl:grid-rows-[1.05fr_0.9fr_0.65fr]">
 						<div className="col-span-7 row-span-1 min-h-0">
 							<DeviceReportMap />
 						</div>

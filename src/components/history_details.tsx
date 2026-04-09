@@ -13,7 +13,7 @@ export const HistoryDetails = ({ device, history }: Props) => {
 	const statusColor = getDeviceStatusColor(device?.status);
 
 	return (
-		<div className="absolute inset-x-4 bottom-4 z-40 max-h-[45%] overflow-y-auto rounded-2xl border border-slate-200/15 bg-slate-950/75 p-4 text-slate-100 shadow-2xl shadow-black/35 backdrop-blur-xl">
+		<div className="z-9999 absolute inset-x-4 bottom-4 z-40 max-h-[45%] overflow-y-auto rounded-2xl border border-slate-200/15 bg-slate-950/75 p-4 text-slate-100 shadow-2xl shadow-black/35 backdrop-blur-xl">
 			<div className="mb-3 flex items-start justify-between gap-3">
 				<div>
 					<p className="text-xs uppercase tracking-[0.16em] text-slate-400">

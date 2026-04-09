@@ -5,11 +5,15 @@ import { useDeviceStore } from "../store/useDeviceStore";
 
 interface PredictionPayload {
 	deviceId?: string;
-	riskScore?: number;
+	deviceID?: string;
+	device_id?: string;
+	riskScore?: number | string;
+	risk_score?: number | string;
 }
 
 export const DeviceReportOutagePercentage = () => {
 	const { focusedDevice } = useDeviceStore();
+	const focusedDeviceId = focusedDevice?.deviceId;
 	const [predictionData, setPredictionData] = useState([
 		{ label: "Risk Score", value: 0, color: "#bedbff" },
 		{ label: "Stable", value: 100, color: "#51a2ff" },
@@ -43,27 +47,56 @@ export const DeviceReportOutagePercentage = () => {
 	}, [riskPercentage]);
 
 	useEffect(() => {
+		if (!focusedDeviceId) {
+			return;
+		}
+
+		const joinDeviceRoom = () => {
+			socket.emit("connectDevice", { deviceId: focusedDeviceId });
+		};
+
+		if (socket.connected) {
+			joinDeviceRoom();
+		}
+
+		socket.on("connect", joinDeviceRoom);
+
+		return () => {
+			socket.off("connect", joinDeviceRoom);
+			socket.emit("disconnectDevice", { deviceId: focusedDeviceId });
+		};
+	}, [focusedDeviceId]);
+
+	useEffect(() => {
 		const handlePrediction = (payload: PredictionPayload) => {
-			if (
-				payload.deviceId &&
-				payload.deviceId !== focusedDevice?.deviceId
-			) {
+			const payloadDeviceId =
+				payload.deviceId || payload.deviceID || payload.device_id;
+
+			if (payloadDeviceId && payloadDeviceId !== focusedDeviceId) {
 				return;
 			}
 
-			if (payload && typeof payload.riskScore === "number") {
-				const riskPercentage = Math.floor(payload.riskScore * 100);
-				const remainder = 100 - riskPercentage;
-				setRiskPercentage(riskPercentage);
-				setPredictionData([
-					{
-						label: "Risk Score",
-						value: riskPercentage,
-						color: "#bedbff",
-					},
-					{ label: "Stable", value: remainder, color: "#51a2ff" },
-				]);
+			const rawRisk = payload.riskScore ?? payload.risk_score;
+			const parsedRisk = Number(rawRisk);
+
+			if (!Number.isFinite(parsedRisk)) {
+				return;
 			}
+
+			const normalizedRisk =
+				parsedRisk <= 1 ? parsedRisk * 100 : parsedRisk;
+			const risk = Math.max(0, Math.min(100, Math.round(normalizedRisk)));
+			const stable = 100 - risk;
+
+			setRiskPercentage(risk);
+			setPredictionData([
+				{
+					label: "Risk Score",
+					value: risk,
+					color: "#bedbff",
+				},
+				{ label: "Stable", value: stable, color: "#51a2ff" },
+			]);
 		};
 
 		socket.on("prediction", handlePrediction);
@@ -71,7 +104,7 @@ export const DeviceReportOutagePercentage = () => {
 		return () => {
 			socket.off("prediction", handlePrediction);
 		};
-	}, [focusedDevice?.deviceId]);
+	}, [focusedDeviceId]);
 
 	return (
 		<section className="flex h-full min-h-88 flex-col overflow-hidden rounded-3xl border border-slate-200/10 bg-slate-900/75 p-4 shadow-xl shadow-black/20 xl:min-h-0">
@@ -99,10 +132,10 @@ export const DeviceReportOutagePercentage = () => {
 						</h3>
 						<PieChart
 							height={150}
-							slotProps={{
-								legend: { hidden: true } as any,
-							}}
 							sx={{
+								"& .MuiChartsLegend-root": {
+									display: "none",
+								},
 								"& .MuiPieArc-root": {
 									stroke: "none",
 								},

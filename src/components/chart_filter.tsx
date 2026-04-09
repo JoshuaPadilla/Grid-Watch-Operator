@@ -1,9 +1,10 @@
 interface Props {
 	onChange: (query: string) => void;
 	position?: string;
+	value?: "week" | "month" | "all";
 }
 
-export const ChartFilter = ({ onChange, position }: Props) => {
+export const ChartFilter = ({ onChange, position, value = "week" }: Props) => {
 	const positionClasses = position ?? "absolute right-4 top-4 z-50";
 
 	return (
@@ -20,7 +21,7 @@ export const ChartFilter = ({ onChange, position }: Props) => {
 				id="chart-filter"
 				name="chart-filter"
 				className="rounded-lg border border-slate-200/10 bg-slate-900/70 px-3 py-1.5 text-sm font-medium text-slate-100 outline-none transition hover:border-sky-300/30"
-				defaultValue="week"
+				value={value}
 				onChange={(e) => onChange(e.target.value)}
 			>
 				<option value="week">This Week</option>
